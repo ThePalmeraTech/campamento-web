@@ -1,0 +1,69 @@
+     <% if available_student_slots > 0 %>
+  <h2>Sign up</h2>
+
+        <%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: 'form-horizontal' }) do |f| %>
+          <%= f.error_notification %>
+
+        <% if @user.errors.any? %>
+            <div class="alert alert-danger">
+              <p>Se encontraron errores:</p>
+              <ul>
+                <% @user.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <fieldset class="mb-3">
+            <legend>Información personal básica:</legend>
+            <%= f.input :full_name, required: true, autofocus: true, input_html: { class: 'form-control' } %>
+            <%= f.input :email, required: true, input_html: { class: 'form-control' } %>
+            <%= f.input :password, required: true, input_html: { class: 'form-control' }, autocomplete: "new-password", hint: "Minimum 6 characters long" %>
+          <%= f.input :password_confirmation, required: true, input_html: { class: 'form-control' }, autocomplete: "new-password" %>
+
+            <%= f.input :phone, input_html: { class: 'form-control' } %>
+            <%= f.input :age, input_html: { class: 'form-control' } %>
+            <%= f.input :country, as: :select, collection: ['Panamá', 'Colombia', 'Otro'], input_html: { class: 'form-select' } %>
+            <%= f.input :city, input_html: { class: 'form-control' } %>
+          </fieldset>
+
+          <fieldset class="mb-3">
+            <legend>Experiencia previa en programación web:</legend>
+            <%= f.input :previous_experience, as: :boolean, inline_label: 'Yes, I have experience with HTML & CSS', input_html: { class: 'form-check-input' } %>
+            <%= f.input :previous_courses, as: :boolean, inline_label: 'Yes, I have taken other web programming courses', input_html: { class: 'form-check-input' } %>
+            <%= f.input :programming_skill_level, collection: ['Beginner', 'Intermediate', 'Advanced'], prompt: "Select one", input_html: { class: 'form-select' } %>
+          </fieldset>
+
+          <fieldset class="mb-3">
+            <legend>Motivación y objetivos:</legend>
+            <%= f.input :motivation, as: :text, input_html: { class: 'form-control' } %>
+            <%= f.input :course_expectations, as: :text, input_html: { class: 'form-control' } %>
+            <%= f.input :specific_goals, as: :text, input_html: { class: 'form-control' } %>
+          </fieldset>
+
+          <fieldset class="mb-3">
+            <legend>Herramientas y recursos disponibles:</legend>
+            <%= f.input :has_reliable_computer, as: :boolean, inline_label: 'I have a reliable computer and internet access', input_html: { class: 'form-check-input' } %>
+          </fieldset>
+
+          <fieldset class="mb-3">
+            <legend>Feedback previo sobre cursos similares:</legend>
+            <%= f.input :feedback_on_previous_courses, as: :text, input_html: { class: 'form-control' } %>
+          </fieldset>
+
+          <fieldset class="mb-3">
+            <legend>Comprobante de pago:</legend>
+            <%= f.input :full_payment_proof, as: :file, label: "Comprobante de pago completo", input_html: { class: 'form-control' } %>
+            <%= f.input :reservation_payment_proof, as: :file, label: "Comprobante de pago de reserva", input_html: { class: 'form-control' } %>
+          </fieldset>
+
+          <%= f.button :submit, "Sign up", class: 'btn btn-primary mt-3' %>
+        <% end %>
+
+<% else %>
+  <h2>El próximo taller comenzará pronto</h2>
+  <p>¡Gracias por tu interés! Actualmente no hay espacios disponibles para este taller. Por favor, vuelve pronto para información sobre futuros talleres.</p>
+<% end %>
+
+<%= render "devise/shared/links" %>

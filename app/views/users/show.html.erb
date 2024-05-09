@@ -1,0 +1,31 @@
+<div class="container mt-4">
+  <h1>Perfil del Usuario</h1>
+  <div class="card">
+    <div class="card-body">
+      <p><strong>Email:</strong> <%= @user.email %></p>
+      <p><strong>Nombre Completo:</strong> <%= @user.full_name %></p>
+      <p><strong>Teléfono:</strong> <%= @user.phone || "No proporcionado" %></p>
+      <p><strong>Edad:</strong> <%= @user.age || "No especificada" %></p>
+      <p><strong>País:</strong> <%= @user.country %></p>
+      <p><strong>Ciudad:</strong> <%= @user.city %></p>
+      <p><strong>Experiencia Previa en Programación:</strong> <%= @user.previous_experience ? "Sí" : "No" %></p>
+      <p><strong>Cursos Previos de Programación:</strong> <%= @user.previous_courses ? "Sí" : "No" %></p>
+      <p><strong>Nivel de Habilidad en Programación:</strong> <%= @user.programming_skill_level %></p>
+      <p><strong>Motivación:</strong> <%= @user.motivation %></p>
+      <p><strong>Expectativas del Curso:</strong> <%= @user.course_expectations %></p>
+      <p><strong>Objetivos Específicos:</strong> <%= @user.specific_goals %></p>
+      <p><strong>Acceso a Computadora Confiable:</strong> <%= @user.has_reliable_computer ? "Sí" : "No" %></p>
+      <p><strong>Feedback sobre Cursos Previos:</strong> <%= @user.feedback_on_previous_courses %></p>
+      <p><strong>Comprobante de Pago:</strong>
+        <% if @user.full_payment_proof.attached? %>
+
+          <%= image_tag rails_blob_url(@user.full_payment_proof), class: "img-fluid" %>
+
+          <%= link_to "Descargar Comprobante", rails_blob_path(@user.full_payment_proof, disposition: "attachment") %>
+        <% else %>
+          No se ha subido comprobante.
+        <% end %>
+      </p>
+    </div>
+  </div>
+</div>

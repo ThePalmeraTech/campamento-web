@@ -1,0 +1,24 @@
+<!-- app/views/classrooms/index.html.erb -->
+<h1>Classrooms</h1>
+<table>
+  <thead>
+    <tr>
+      <th>Teacher</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @classrooms.each do |classroom| %>
+      <tr>
+        <td><%= classroom.teacher.full_name %></td>
+        <td><%= classroom.status %></td>
+        <td>
+          <%= link_to 'Show', classroom %>
+          <%= link_to 'Edit', edit_classroom_path(classroom) %>
+          <%= link_to 'Delete', classroom, method: :delete, data: { confirm: 'Are you sure?' } %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
