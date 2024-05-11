@@ -1,0 +1,48 @@
+<div class="container mt-4">
+  <h1 class="mb-4">Perfil del Usuario</h1>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h4>Información Básica</h4>
+        </div>
+        <div class="card-body">
+          <p><i class="fas fa-envelope mr-2"></i><strong>Email:</strong> <%= @user.email %></p>
+          <p><i class="fas fa-user mr-2"></i><strong>Nombre Completo:</strong> <%= @user.full_name %></p>
+          <p><i class="fas fa-phone mr-2"></i><strong>Teléfono:</strong> <%= @user.phone || "No proporcionado" %></p>
+          <p><i class="fas fa-birthday-cake mr-2"></i><strong>Edad:</strong> <%= @user.age || "No especificada" %></p>
+          <p><i class="fas fa-globe mr-2"></i><strong>País:</strong> <%= @user.country %></p>
+          <p><i class="fas fa-city mr-2"></i><strong>Ciudad:</strong> <%= @user.city %></p>
+        </div>
+      </div>
+    </div>
+
+    <% if current_user.admin? %>
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <h4>Información de Programación</h4>
+          </div>
+          <div class="card-body">
+            <p><i class="fas fa-laptop-code mr-2"></i><strong>Experiencia Previa en Programación:</strong> <%= @user.previous_experience ? "Sí" : "No" %></p>
+            <p><i class="fas fa-school mr-2"></i><strong>Cursos Previos de Programación:</strong> <%= @user.previous_courses ? "Sí" : "No" %></p>
+            <p><i class="fas fa-signal mr-2"></i><strong>Nivel de Habilidad en Programación:</strong> <%= @user.programming_skill_level %></p>
+            <p><i class="fas fa-heart mr-2"></i><strong>Motivación:</strong> <%= @user.motivation %></p>
+            <p><i class="fas fa-graduation-cap mr-2"></i><strong>Expectativas del Curso:</strong> <%= @user.course_expectations %></p>
+            <p><i class="fas fa-bullseye mr-2"></i><strong>Objetivos Específicos:</strong> <%= @user.specific_goals %></p>
+            <p><i class="fas fa-desktop mr-2"></i><strong>Acceso a Computadora Confiable:</strong> <%= @user.has_reliable_computer ? "Sí" : "No" %></p>
+            <p><i class="fas fa-comments mr-2"></i><strong>Feedback sobre Cursos Previos:</strong> <%= @user.feedback_on_previous_courses %></p>
+            <p><i class="fas fa-file-invoice-dollar mr-2"></i><strong>Comprobante de Pago:</strong>
+              <% if @user.full_payment_proof.attached? %>
+                <%= image_tag @user.full_payment_proof, class: "img-fluid" %>
+                <%= link_to "Descargar Comprobante", rails_blob_path(@user.full_payment_proof, disposition: "attachment"), class: "btn btn-primary mt-2" %>
+              <% else %>
+                No se ha subido comprobante.
+              <% end %>
+            </p>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

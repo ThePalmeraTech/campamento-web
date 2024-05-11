@@ -3,13 +3,15 @@ class AdminController < ApplicationController
   before_action :ensure_admin
 
   def index
-    @users = User.all.order(created_at: :asc)
+    @classrooms = Classroom.all
+    @users = User.where(role: 'estudiante')  # Ensure only users with the role of 'student' are listed
   end
+
 
   def approve
     user = User.find(params[:id])
     user.update(approved: true)
-    redirect_to admin_index_path, notice: 'User approved successfully'
+    redirect_to admin_path, notice: 'User approved successfully'
   end
 
   private
@@ -17,7 +19,4 @@ class AdminController < ApplicationController
   def ensure_admin
     redirect_to root_path, alert: 'Access denied' unless current_user.admin?
   end
-
-
-
 end

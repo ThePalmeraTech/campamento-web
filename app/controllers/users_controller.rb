@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :update, :destroy]
+  before_action :set_user, only: [:show, :edit, :profile, :update, :destroy]
 
   def index
     @users = User.all
@@ -8,6 +8,11 @@ class UsersController < ApplicationController
 
   def show
     authorize @user
+  end
+
+  def profile
+    # This action will render a user's profile
+    # Assumes you have a profile.html.erb view for users
   end
 
   def update

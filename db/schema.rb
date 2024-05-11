@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_05_09_223054) do
+ActiveRecord::Schema[7.0].define(version: 2024_05_10_190525) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -68,6 +68,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_09_223054) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "students_count", default: 0
+    t.integer "final_student_count"
     t.index ["teacher_id"], name: "index_classrooms_on_teacher_id"
   end
 

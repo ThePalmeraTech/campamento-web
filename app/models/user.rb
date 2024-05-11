@@ -1,8 +1,11 @@
 class User < ApplicationRecord
+  has_many :classroom_students, dependent: :destroy
+  has_many :classrooms, through: :classroom_students
   has_one_attached :full_payment_proof
   has_one_attached :reservation_payment_proof
 
   validate :at_least_one_payment_proof
+  validate :must_have_active_classroom, if: -> { role == 'estudiante' }
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
@@ -27,6 +30,12 @@ class User < ApplicationRecord
       errors.add(:base, "Debe subir al menos un comprobante de pago: completo o de reserva.")
     end
   end
-  
+
+  def must_have_active_classroom
+    unless Classroom.exists?(status: ['Abierto', 'En clase'])
+      errors.add(:base, 'No se puede asignar el rol de estudiante sin un aula activa.')
+    end
+  end
+
 
 end

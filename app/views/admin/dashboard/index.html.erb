@@ -1,0 +1,95 @@
+<!-- Dentro de app/views/admin/dashboard/index.html.erb -->
+<div class="container mt-4">
+  <section>
+    <h3>Estudiantes</h3>
+    <% if @students.any? %>
+      <table class="table table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th>Email</th>
+            <th>Nombre</th>
+            <th>Aprobado</th>
+            <th>Acciones</th>
+            <th>Perfil</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @students.each do |student| %>
+            <tr>
+              <td><%= student.email %></td>
+              <td><%= student.full_name %></td>
+              <td><%= student.approved ? 'Sí' : 'No' %></td>
+              <td>
+                <%= form_with model: student, url: admin_approve_user_path(student), method: :patch do |f| %>
+                  <%= f.hidden_field :approved, value: true %>
+                  <%= f.submit "Aprobar", class: 'btn btn-success btn-sm' %>
+                <% end %>
+              </td>
+              <td><%= link_to 'Ver Perfil', profile_user_path(student), class: 'btn btn-info btn-sm' %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p>No hay estudiantes registrados.</p>
+    <% end %>
+  </section>
+
+  <section>
+    <h3>Aulas</h3>
+    <table class="table table-striped">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+          <th>Cambiar Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @classrooms.each do |classroom| %>
+          <tr>
+            <td><%= classroom.id %></td>
+            <td><%= classroom.status %></td>
+            <td>
+              <%= link_to 'Show', classroom, class: 'btn btn-primary btn-sm' %>
+              <%= link_to 'Edit', edit_classroom_path(classroom), class: 'btn btn-warning btn-sm' %>
+              <%= link_to 'Delete', classroom, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
+            </td>
+            <td>
+              <%= simple_form_for(classroom, url: admin_classroom_path(classroom), method: :patch) do |f| %>
+                <%= f.input :status, collection: ['Abierto', 'Completo', 'Finalizado'], include_blank: false, label: false, input_html: { class: 'form-control' } %>
+                <%= f.button :submit, 'Actualizar', class: 'btn btn-info btn-sm' %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <%= link_to 'Crear Nuevo Aula', new_classroom_path, class: 'btn btn-success' %>
+  </section>
+
+  <section>
+    <h3>Coders</h3>
+    <table class="table table-striped">
+      <thead class="table-dark">
+        <tr>
+          <th>Email</th>
+          <th>Nombre</th>
+          <th>Aprobado</th>
+          <th>Perfil</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @coders.each do |coder| %>
+          <tr>
+            <td><%= coder.email %></td>
+            <td><%= coder.full_name %></td>
+            <td><%= coder.approved ? 'Sí' : 'No' %></td>
+            <td><%= link_to 'Ver Perfil', profile_user_path(coder), class: 'btn btn-info btn-sm' %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </section>
+</div>
