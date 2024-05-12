@@ -1,0 +1,28 @@
+<!-- app/views/lessons/index.html.erb -->
+<h1 class="mb-4">Lecciones del Taller: <%= @workshop.name %></h1>
+
+<div class="table-responsive">
+  <table class="table table-hover">
+    <thead class="thead-light">
+      <tr>
+        <th>Título</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @lessons.each do |lesson| %>
+        <tr>
+          <td><%= lesson.title %></td>
+          <td>
+            <%= link_to 'Ver', workshop_lesson_path(@workshop, lesson), class: 'btn btn-info btn-sm m-1' %>
+            <%= link_to 'Editar', edit_workshop_lesson_path(@workshop, lesson), class: 'btn btn-primary btn-sm m-1' %>
+            <%= link_to 'Eliminar', workshop_lesson_path(@workshop, lesson), method: :delete, data: { confirm: '¿Estás seguro?' }, class: 'btn btn-danger btn-sm m-1' %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<%= link_to 'Añadir Nueva Lección', new_workshop_lesson_path(@workshop), class: 'btn btn-success my-3' %>
+<%= link_to 'Volver a Talleres', workshops_path, class: 'btn btn-secondary my-3' %>

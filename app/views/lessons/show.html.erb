@@ -1,0 +1,12 @@
+<!-- app/views/lessons/show.html.erb -->
+<div class="container mt-4">
+  <h1 class="display-4"><%= @lesson.title %></h1>
+  <div class="mt-3 mb-4 bg-light p-3 rounded">
+    <%= raw @lesson.content %> <!-- Usar 'raw' para renderizar HTML almacenado -->
+  </div>
+
+<div>
+  <%= link_to 'Editar', edit_workshop_lesson_path(@workshop, @lesson), class: 'btn btn-primary' %>
+  <%= link_to 'Volver a Lecciones', workshop_lessons_path(@workshop), class: 'btn btn-secondary' %>
+</div>
+</div>

@@ -1,10 +1,13 @@
 class Classroom < ApplicationRecord
-  belongs_to :teacher, class_name: 'User'
+  belongs_to :teacher, class_name: 'User', foreign_key: 'teacher_id'
   validates :teacher, presence: true
   validate :teacher_must_be_admin
   has_many :classroom_students
   has_many :students, through: :classroom_students, source: :user
+  has_one :workshop
   before_save :update_final_student_count, if: -> { status_changed? && status == 'Finalizado' }
+
+
 
   has_many :class_sessions, dependent: :destroy
 
@@ -16,6 +19,11 @@ class Classroom < ApplicationRecord
 
   before_update :update_student_roles, if: -> { status_changed? && status == 'Finalizado' }
   after_save :update_status_if_full, unless: -> { status == 'Finalizado' }
+
+  def to_label
+    "Classroom #{id}: #{status}"  # Cambia esto para reflejar cómo quieres que se muestre
+  end
+
 
   private
 

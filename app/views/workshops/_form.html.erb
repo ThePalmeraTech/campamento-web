@@ -1,0 +1,51 @@
+<% if @workshop.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(@workshop.errors.count, "error") %> prohibited this workshop from being saved:</h2>
+    <ul>
+    <% @workshop.errors.full_messages.each do |message| %>
+      <li><%= message %></li>
+    <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= simple_form_for(workshop) do |f| %>
+  <%= f.input :name %>
+  <%= f.input :description %>
+
+  <%= f.simple_fields_for :lessons do |lesson| %>
+    <div class="lesson-fields">
+      <%= lesson.input :title %>
+      <%= lesson.input :content, label: 'Content', as: :text, input_html: { class: 'form-control', id: 'lesson-content' } %>
+      <%= lesson.hidden_field :_destroy %>
+      <%= link_to "Remove Lesson", '#', class: "remove_fields btn btn-sm btn-danger" %>
+    </div>
+  <% end %>
+
+  <%= link_to "Add Lesson", '#', class: "add_fields btn btn-sm btn-success", data: { id: "new_lessons", fields: fields_for_lesson(f) } %>
+
+  <%= f.button :submit %>
+<% end %>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelector('.add_fields').addEventListener('click', function(e) {
+        e.preventDefault();
+        var time = new Date().getTime();
+        var regexp = new RegExp(this.dataset.id, 'g');
+        var newFields = this.dataset.fields.replace(regexp, time);
+        this.insertAdjacentHTML('beforebegin', newFields);
+    });
+
+    document.querySelectorAll('.remove_fields').forEach(function(button) {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            var fieldWrapper = this.closest('.lesson-fields');
+            fieldWrapper.querySelector('input[type=hidden]').value = '1';
+            fieldWrapper.style.display = 'none';
+        });
+    });
+});
+
+</script>

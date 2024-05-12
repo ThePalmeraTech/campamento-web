@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_05_10_190525) do
+ActiveRecord::Schema[7.0].define(version: 2024_05_12_014157) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -72,6 +72,15 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_10_190525) do
     t.index ["teacher_id"], name: "index_classrooms_on_teacher_id"
   end
 
+  create_table "lessons", force: :cascade do |t|
+    t.string "title"
+    t.text "content"
+    t.integer "workshop_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["workshop_id"], name: "index_lessons_on_workshop_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -99,10 +108,21 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_10_190525) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "workshops", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.integer "classroom_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["classroom_id"], name: "index_workshops_on_classroom_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "class_sessions", "classrooms"
   add_foreign_key "classroom_students", "classrooms"
   add_foreign_key "classroom_students", "users"
   add_foreign_key "classrooms", "users", column: "teacher_id"
+  add_foreign_key "lessons", "workshops"
+  add_foreign_key "workshops", "classrooms"
 end
