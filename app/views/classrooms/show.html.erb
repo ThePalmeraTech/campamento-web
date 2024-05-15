@@ -1,14 +1,19 @@
 <!-- app/views/classrooms/show.html.erb -->
 <div class="container mt-4">
-    <h1 class="mb-4">Detalles del Aula</h1>
-
     <div class="card mb-4">
         <div class="card-body">
-            <h4 class="card-title">Información del Aula</h4>
+            <h4 class="card-title">Información del Aula #<%= @classroom.id %></h4>
             <p class="card-text"><strong>ID:</strong> <%= @classroom.id %></p>
             <p class="card-text"><strong>Estado:</strong> <%= @classroom.status %></p>
             <p class="card-text"><strong>Profesor:</strong> <%= @classroom.teacher.full_name %></p>
             <p class="card-text"><strong>Número de estudiantes:</strong> <%= @classroom.students.count %></p>
+            <% if current_user.admin? %>
+              <p class="card-text"><strong>Costo Total del Aula:</strong> <%= number_to_currency(@classroom.total_cost) %></p>
+            <% end %>
+            <p><strong>Workshop:</strong> <%= @classroom.workshop ? @classroom.workshop.name : "No Workshop Assigned" %></p>
+            <% if @classroom.workshop %>
+              <%= link_to 'View Workshop', workshop_path(@classroom.workshop), class: 'btn btn-info' %>
+            <% end %>
         </div>
     </div>
 
@@ -17,20 +22,24 @@
             <h4 class="card-title">Estudiantes</h4>
             <table class="table">
                 <thead>
-                <tr>
-                    <th>Email</th>
-                    <th>Nombre</th>
-                    <th>Rol</th>
-                </tr>
+                    <tr>
+                        <% if current_user.admin? %>
+                            <th>Email</th>
+                        <% end %>
+                        <th>Nombre</th>
+                        <th>Rol</th>
+                    </tr>
                 </thead>
                 <tbody>
-                <% @classroom.students.each do |student| %>
-                    <tr>
-                        <td><%= student.email %></td>
-                        <td><%= student.full_name %></td>
-                        <td><%= student.role %></td>
-                    </tr>
-                <% end %>
+                    <% @classroom.students.each do |student| %>
+                        <tr>
+                            <% if current_user.admin? %>
+                                <td><%= student.email %></td>
+                            <% end %>
+                            <td><%= student.full_name %></td>
+                            <td><%= student.role %></td>
+                        </tr>
+                    <% end %>
                 </tbody>
             </table>
         </div>
@@ -41,27 +50,33 @@
             <h4 class="card-title">Sesiones de Clase</h4>
             <table class="table">
                 <thead>
-                <tr>
-                    <th>Fecha</th>
-                    <th>Hora de Inicio</th>
-                    <th>Duración</th>
-                </tr>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Hora de Inicio</th>
+                        <th>Duración</th>
+                    </tr>
                 </thead>
                 <tbody>
-                <% @classroom.class_sessions.each do |session| %>
-                    <tr>
-                        <td><%= session.session_date %></td>
-                        <td><%= session.start_time.strftime('%H:%M') %></td>
-                        <td><%= session.duration %> horas</td>
-                    </tr>
-                <% end %>
+                    <% @classroom.class_sessions.each do |session| %>
+                        <tr>
+                            <td><%= session.session_date %></td>
+                            <td><%= session.start_time.strftime('%H:%M') %></td>
+                            <td><%= session.duration %> horas</td>
+                        </tr>
+                    <% end %>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <div class="mb-3">
-        <%= link_to 'Editar Aula', edit_classroom_path(@classroom), class: 'btn btn-primary' %>
-        <%= link_to 'Volver al listado', classrooms_path, class: 'btn btn-secondary' %>
-    </div>
+    <% if user_signed_in? && current_user.admin? %>
+      <div class="mb-3">
+          <%= link_to 'Editar Aula', edit_classroom_path(@classroom), class: 'btn btn-primary' %>
+          <%= link_to 'Volver al listado', classrooms_path, class: 'btn btn-secondary' %>
+      </div>
+    <% else %>
+      <div class="mb-3">
+          <%= link_to 'Volver al listado', classrooms_path, class: 'btn btn-secondary' %>
+      </div>
+    <% end %>
 </div>

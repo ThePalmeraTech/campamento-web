@@ -14,6 +14,8 @@
 
 <%= simple_form_for(@classroom, url: classroom_path(@classroom), method: :patch, html: { 'data-turbo': 'false' }) do |f| %>
   <div class="form-group">
+
+    <%= f.collection_select :workshop_id, Workshop.all, :id, :name, {include_blank: 'Please select'}, {class: 'form-select', required: true} %>
     <%= f.label :teacher_id, "Select a Teacher", class: 'form-label' %>
     <%= f.collection_select :teacher_id, User.where(role: 'admin'), :id, :full_name, {include_blank: 'Please select'}, {class: 'form-select', required: true} %>
     <%= f.input :day_count, label: 'Number of Days', input_html: { type: 'number', min: 1, class: 'form-control', id: 'day_count', value: @classroom.day_count } %>

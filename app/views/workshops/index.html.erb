@@ -1,8 +1,5 @@
 <h1>Workshops</h1>
 <%= link_to 'New Workshop', new_workshop_path, class: 'btn btn-primary' %>
-<% @workshops.each do |workshop| %>
-  <%= link_to 'Add New Lesson', new_workshop_lesson_path(workshop) %>
-<% end %>
 
 <table class="table">
   <thead>

@@ -1,69 +1,123 @@
-     <% if available_student_slots > 0 %>
-  <h2>Sign up</h2>
+<style>
+  body {
+  background-color: #343a40;
+  color: #fff;
+}
 
-        <%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: 'form-horizontal' }) do |f| %>
-          <%= f.error_notification %>
+.nav-underline .nav-link {
+  color: #adb5bd;
+}
 
-        <% if @user.errors.any? %>
-            <div class="alert alert-danger">
-              <p>Se encontraron errores:</p>
-              <ul>
-                <% @user.errors.full_messages.each do |message| %>
-                  <li><%= message %></li>
-                <% end %>
-              </ul>
-            </div>
-          <% end %>
+.nav-underline .nav-link.active {
+  color: #007bff;
+  border-color: #007bff;
+}
 
-          <fieldset class="mb-3">
-            <legend>Información personal básica:</legend>
-            <%= f.input :full_name, required: true, autofocus: true, input_html: { class: 'form-control' } %>
-            <%= f.input :email, required: true, input_html: { class: 'form-control' } %>
-            <%= f.input :password, required: true, input_html: { class: 'form-control' }, autocomplete: "new-password", hint: "Minimum 6 characters long" %>
-          <%= f.input :password_confirmation, required: true, input_html: { class: 'form-control' }, autocomplete: "new-password" %>
+.form-control, .form-select, .form-check-input {
+  background-color: #495057;
+  color: #fff;
+  border-color: #6c757d;
+}
 
-            <%= f.input :phone, input_html: { class: 'form-control' } %>
-            <%= f.input :age, input_html: { class: 'form-control' } %>
-            <%= f.input :country, as: :select, collection: ['Panamá', 'Colombia', 'Otro'], input_html: { class: 'form-select' } %>
-            <%= f.input :city, input_html: { class: 'form-control' } %>
-          </fieldset>
+.form-control::placeholder {
+  color: #ced4da;
+}
 
-          <fieldset class="mb-3">
-            <legend>Experiencia previa en programación web:</legend>
-            <%= f.input :previous_experience, as: :boolean, inline_label: 'Yes, I have experience with HTML & CSS', input_html: { class: 'form-check-input' } %>
-            <%= f.input :previous_courses, as: :boolean, inline_label: 'Yes, I have taken other web programming courses', input_html: { class: 'form-check-input' } %>
-            <%= f.input :programming_skill_level, collection: ['Beginner', 'Intermediate', 'Advanced'], prompt: "Select one", input_html: { class: 'form-select' } %>
-          </fieldset>
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
 
-          <fieldset class="mb-3">
-            <legend>Motivación y objetivos:</legend>
-            <%= f.input :motivation, as: :text, input_html: { class: 'form-control' } %>
-            <%= f.input :course_expectations, as: :text, input_html: { class: 'form-control' } %>
-            <%= f.input :specific_goals, as: :text, input_html: { class: 'form-control' } %>
-          </fieldset>
 
-          <fieldset class="mb-3">
-            <legend>Herramientas y recursos disponibles:</legend>
-            <%= f.input :has_reliable_computer, as: :boolean, inline_label: 'I have a reliable computer and internet access', input_html: { class: 'form-check-input' } %>
-          </fieldset>
+</style>
+<%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: 'form-horizontal' }) do |f| %>
+  <%= f.error_notification %>
 
-          <fieldset class="mb-3">
-            <legend>Feedback previo sobre cursos similares:</legend>
-            <%= f.input :feedback_on_previous_courses, as: :text, input_html: { class: 'form-control' } %>
-          </fieldset>
-
-          <fieldset class="mb-3">
-            <legend>Comprobante de pago:</legend>
-            <%= f.input :full_payment_proof, as: :file, label: "Comprobante de pago completo", input_html: { class: 'form-control' } %>
-            <%= f.input :reservation_payment_proof, as: :file, label: "Comprobante de pago de reserva", input_html: { class: 'form-control' } %>
-          </fieldset>
-
-          <%= f.button :submit, "Sign up", class: 'btn btn-primary mt-3' %>
+  <% if resource.errors.any? %>
+    <div class="alert alert-danger">
+      <p>Se encontraron errores:</p>
+      <ul>
+        <% resource.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
         <% end %>
+      </ul>
+    </div>
+  <% end %>
 
-<% else %>
-  <h2>El próximo taller comenzará pronto</h2>
-  <p>¡Gracias por tu interés! Actualmente no hay espacios disponibles para este taller. Por favor, vuelve pronto para información sobre futuros talleres.</p>
+  <fieldset class="mb-3">
+    <legend>Información personal básica:</legend>
+    <%= f.input :full_name, required: true, autofocus: true, input_html: { class: 'form-control', autocomplete: 'name' } %>
+    <%= f.input :email, required: true, input_html: { class: 'form-control', autocomplete: 'email' } %>
+    <%= f.input :password, required: true, input_html: { class: 'form-control', autocomplete: 'new-password' }, hint: "Minimum 6 characters long" %>
+    <%= f.input :password_confirmation, required: true, input_html: { class: 'form-control', autocomplete: 'new-password' } %>
+    <%= f.input :phone, input_html: { class: 'form-control', autocomplete: 'tel' } %>
+    <%= f.input :age, input_html: { class: 'form-control', autocomplete: 'bday' } %>
+    <%= f.input :country, as: :select, collection: ['Panamá', 'Colombia', 'Otro'], input_html: { class: 'form-select' } %>
+    <%= f.input :city, input_html: { class: 'form-control', autocomplete: 'address-level2' } %>
+  </fieldset>
+
+  <fieldset class="mb-3">
+    <legend>Experiencia previa en programación web:</legend>
+    <%= f.input :previous_experience, as: :boolean, inline_label: 'Yes, I have experience with HTML & CSS', input_html: { class: 'form-check-input' } %>
+    <%= f.input :previous_courses, as: :boolean, inline_label: 'Yes, I have taken other web programming courses', input_html: { class: 'form-check-input' } %>
+    <%= f.input :programming_skill_level, collection: ['Beginner', 'Intermediate', 'Advanced'], prompt: "Select one", input_html: { class: 'form-select' } %>
+  </fieldset>
+
+  <fieldset class="mb-3">
+    <legend>Motivación y objetivos:</legend>
+    <%= f.input :motivation, as: :text, input_html: { class: 'form-control' } %>
+    <%= f.input :course_expectations, as: :text, input_html: { class: 'form-control' } %>
+    <%= f.input :specific_goals, as: :text, input_html: { class: 'form-control' } %>
+  </fieldset>
+
+  <fieldset class="mb-3">
+    <legend>Herramientas y recursos disponibles:</legend>
+    <%= f.input :has_reliable_computer, as: :boolean, inline_label: 'I have a reliable computer and internet access', input_html: { class: 'form-check-input' } %>
+  </fieldset>
+
+  <fieldset class="mb-3">
+    <legend>Feedback previo sobre cursos similares:</legend>
+    <%= f.input :feedback_on_previous_courses, as: :text, input_html: { class: 'form-control' } %>
+  </fieldset>
+
+  <!-- Bootstrap Underline Tabs for Payment Proof -->
+  <fieldset class="mb-3">
+    <legend>Comprobante de pago:</legend>
+    <ul class="nav nav-underline mb-3" id="paymentProofTab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <a class="nav-link active" id="full-payment-tab" data-bs-toggle="tab" href="#full-payment" role="tab" aria-controls="full-payment" aria-selected="true">Comprobante de pago completo</a>
+      </li>
+      <li class="nav-item" role="presentation">
+        <a class="nav-link" id="reservation-payment-tab" data-bs-toggle="tab" href="#reservation-payment" role="tab" aria-controls="reservation-payment" aria-selected="false">Comprobante de pago de reserva</a>
+      </li>
+    </ul>
+    <div class="tab-content" id="paymentProofTabContent">
+      <div class="tab-pane fade show active" id="full-payment" role="tabpanel" aria-labelledby="full-payment-tab">
+        <%= f.input :full_payment_proof, as: :file, label: false, input_html: { class: 'form-control mt-2' } %>
+      </div>
+      <div class="tab-pane fade" id="reservation-payment" role="tabpanel" aria-labelledby="reservation-payment-tab">
+        <%= f.input :reservation_payment_proof, as: :file, label: false, input_html: { class: 'form-control mt-2' } %>
+      </div>
+    </div>
+  </fieldset>
+
+  <%= f.button :submit, "Sign up", class: 'btn btn-primary mt-3' %>
 <% end %>
 
 <%= render "devise/shared/links" %>
+
+<!-- Inicializar Bootstrap Tabs -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var triggerTabList = [].slice.call(document.querySelectorAll('#paymentProofTab a'));
+    triggerTabList.forEach(function (triggerEl) {
+      var tabTrigger = new bootstrap.Tab(triggerEl);
+
+      triggerEl.addEventListener('click', function (event) {
+        event.preventDefault();
+        tabTrigger.show();
+      });
+    });
+  });
+</script>
+

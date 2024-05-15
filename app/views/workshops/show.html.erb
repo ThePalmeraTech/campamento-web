@@ -2,36 +2,51 @@
 <div class="container mt-4">
   <h1><%= @workshop.name %></h1>
   <p><%= @workshop.description %></p>
-  <div class="mb-3">
-    <%= link_to 'Editar Taller', edit_workshop_path(@workshop), class: 'btn btn-warning' %>
-    <%= link_to 'Volver a la Lista', workshops_path, class: 'btn btn-secondary' %>
-  </div>
-
+  <% if user_signed_in? && current_user.admin? %>
+    <div class="mb-3">
+      <%= link_to 'Editar Taller', edit_workshop_path(@workshop), class: 'btn btn-warning' %>
+      <%= link_to 'Volver a la Lista', workshops_path, class: 'btn btn-secondary' %>
+    </div>
+  <% end %>
+  <br><br>
   <h3>Lecciones</h3>
-  <% if @workshop.lessons.any? %>
-    <table class="table">
-      <thead>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Título</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @lessons.each do |lesson| %>
         <tr>
-          <th>Título</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @workshop.lessons.each do |lesson| %>
-          <tr>
-            <td><%= lesson.title %></td>
-            <td>
-              <%= link_to 'Ver', workshop_lesson_path(@workshop, lesson), class: 'btn btn-info btn-sm' %>
+          <td><%= lesson.title %></td>
+          <td>
+            <% if @completed_lessons.include?(lesson.id) %>
+              <span class="badge badge-completed ml-2">Completada</span>
+            <% else %>
+              <span class="badge badge-not-completed ml-2">No completada</span>
+            <% end %>
+          </td>
+          <td>
+            <% if @completed_lessons.include?(lesson.id) %>
+              <%= link_to 'Repasar lección', workshop_lesson_path(@workshop, lesson), class: 'btn btn-info btn-sm' %>
+            <% else %>
+              <%= link_to 'Abrir', workshop_lesson_path(@workshop, lesson), class: 'btn btn-info btn-sm' %>
+            <% end %>
+            <% if user_signed_in? && current_user.admin? %>
               <%= link_to 'Editar', edit_workshop_lesson_path(@workshop, lesson), class: 'btn btn-primary btn-sm' %>
               <%= link_to 'Eliminar', workshop_lesson_path(@workshop, lesson), method: :delete, data: { confirm: '¿Estás seguro?' }, class: 'btn btn-danger btn-sm' %>
-            </td>
-          </tr>
-        <% end %> <!-- Asegúrate de que este 'end' esté presente -->
-      </tbody>
-    </table>
-  <% else %>
-    <p>No hay lecciones asociadas a este taller.</p>
-  <% end %> <!-- Asegúrate de que este 'end' esté presente -->
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 
-  <%= link_to 'Añadir Nueva Lección', new_workshop_lesson_path(@workshop), class: 'btn btn-success' %>
+  <% if user_signed_in? && current_user.admin? %>
+    <%= link_to 'Añadir Nueva Lección', new_workshop_lesson_path(@workshop), class: 'btn btn-success' %>
+  <% end %>
 </div>

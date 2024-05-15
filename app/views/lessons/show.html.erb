@@ -2,11 +2,29 @@
 <div class="container mt-4">
   <h1 class="display-4"><%= @lesson.title %></h1>
   <div class="mt-3 mb-4 bg-light p-3 rounded">
-    <%= raw @lesson.content %> <!-- Usar 'raw' para renderizar HTML almacenado -->
+    <!-- Usar raw para mostrar el contenido sin escapar -->
+    <%= raw highlight_prism(@lesson.content) %>
   </div>
 
-<div>
-  <%= link_to 'Editar', edit_workshop_lesson_path(@workshop, @lesson), class: 'btn btn-primary' %>
-  <%= link_to 'Volver a Lecciones', workshop_lessons_path(@workshop), class: 'btn btn-secondary' %>
+  <div>
+    <% if @lesson.completions.find_by(user: current_user).nil? %>
+      <%= button_to 'Marcar como Completada',
+                    toggle_completion_workshop_lesson_path(@workshop, @lesson),
+                    method: :post,
+                    class: 'btn btn-success',
+                    data: { turbo: true } %>
+    <% else %>
+      <p>Lección completada.</p>
+    <% end %>
+
+    <%= link_to 'Editar', edit_workshop_lesson_path(@workshop, @lesson), class: 'btn btn-primary' %>
+    <%= link_to 'Volver a Lecciones', workshop_lessons_path(@workshop), class: 'btn btn-secondary' %>
+  </div>
 </div>
-</div>
+
+<!-- Inicializar Prism.js -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    Prism.highlightAll();
+  });
+</script>

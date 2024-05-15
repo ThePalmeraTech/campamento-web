@@ -1,19 +1,25 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :profile, :update, :destroy]
+  before_action :authenticate_user!, only:[:show, :edit, :profile, :update, :destroy]
+
 
   def index
     @users = User.all
     authorize @users
   end
 
-  def show
-    authorize @user
+  def profile
+    @user = User.find(params[:id])  # Asegúrate de que esto esté obteniendo el usuario correcto.
+    # Carga las lecciones completadas por el usuario
+    @completed_lessons = LessonCompletion.includes(:lesson).where(user_id: @user.id).map(&:lesson)
   end
 
+
   def profile
-    # This action will render a user's profile
-    # Assumes you have a profile.html.erb view for users
+    @user = User.find(params[:id])
+    # Asegúrate de cargar las lecciones completadas por el usuario
+    @completed_lessons = @user.lesson_completions.includes(:lesson).map(&:lesson)
   end
+
 
   def update
     authorize @user

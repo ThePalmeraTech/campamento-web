@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_05_12_014157) do
+ActiveRecord::Schema[7.0].define(version: 2024_05_12_215319) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -69,7 +69,21 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_12_014157) do
     t.datetime "updated_at", null: false
     t.integer "students_count", default: 0
     t.integer "final_student_count"
+    t.integer "workshop_id"
     t.index ["teacher_id"], name: "index_classrooms_on_teacher_id"
+    t.index ["workshop_id"], name: "index_classrooms_on_workshop_id"
+  end
+
+  create_table "lesson_completions", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "lesson_id", null: false
+    t.string "status", null: false
+    t.datetime "completion_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lesson_id"], name: "index_lesson_completions_on_lesson_id"
+    t.index ["user_id", "lesson_id"], name: "index_lesson_completions_on_user_id_and_lesson_id", unique: true
+    t.index ["user_id"], name: "index_lesson_completions_on_user_id"
   end
 
   create_table "lessons", force: :cascade do |t|
@@ -123,6 +137,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_12_014157) do
   add_foreign_key "classroom_students", "classrooms"
   add_foreign_key "classroom_students", "users"
   add_foreign_key "classrooms", "users", column: "teacher_id"
+  add_foreign_key "lesson_completions", "lessons"
+  add_foreign_key "lesson_completions", "users"
   add_foreign_key "lessons", "workshops"
   add_foreign_key "workshops", "classrooms"
 end

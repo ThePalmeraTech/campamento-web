@@ -2,30 +2,28 @@
 <div class="container mt-4">
   <h1>Classrooms</h1>
 
-  <div class="my-3">
-    <%= link_to 'Create New Classroom', new_classroom_path, class: 'btn btn-success' %>
-  </div>
+  <% if current_user.admin? %>
+    <div class="my-3">
+      <%= link_to 'Create New Classroom', new_classroom_path, class: 'btn btn-success' %>
+    </div>
+  <% end %>
 
-  <table class="table table-hover">
-    <thead class="table-dark">
-      <tr>
-        <th>Teacher</th>
-        <th>Status</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
+  <% if @classrooms.any? %>
+    <div class="row">
       <% @classrooms.each do |classroom| %>
-        <tr>
-          <td><%= classroom.teacher.full_name %></td>
-          <td><%= classroom.status %></td>
-          <td>
-            <%= link_to 'Show', classroom, class: 'btn btn-primary btn-sm' %>
-            <%= link_to 'Edit', edit_classroom_path(classroom), class: 'btn btn-secondary btn-sm' %>
-            <%= link_to 'Delete', classroom, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
-          </td>
-        </tr>
+        <div class="col-md-6">
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5 class="card-title">Classroom: <%= classroom.id %></h5>
+              <p class="card-text"><strong>Teacher:</strong> <%= classroom.teacher.full_name %></p>
+              <p class="card-text"><strong>Status:</strong> <%= classroom.status %></p>
+              <%= link_to 'View Details', classroom, class: 'btn btn-primary' %>
+            </div>
+          </div>
+        </div>
       <% end %>
-    </tbody>
-  </table>
+    </div>
+  <% else %>
+    <p>No classrooms available or you are not enrolled in any classrooms.</p>
+  <% end %>
 </div>

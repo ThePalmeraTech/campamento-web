@@ -7,6 +7,9 @@ class User < ApplicationRecord
   validate :at_least_one_payment_proof
   validate :must_have_active_classroom, if: -> { role == 'estudiante' }
 
+  has_many :lesson_completions, dependent: :destroy
+
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,

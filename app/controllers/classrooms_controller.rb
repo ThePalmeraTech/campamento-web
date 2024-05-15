@@ -8,13 +8,20 @@ class ClassroomsController < ApplicationController
   end
 
   def index
-    @classrooms = Classroom.all
+    if current_user.admin?
+      @classrooms = Classroom.all
+    else
+      @classrooms = current_user.classrooms
+    end
   end
 
-  def show
-    @classroom = Classroom.includes(:students).find(params[:id])
-  end
-  
+# app/controllers/classrooms_controller.rb
+def show
+  @classroom = Classroom.includes(:students, :workshop).find(params[:id])
+end
+
+
+
   def create
     @classroom = Classroom.new(classroom_params)
     if @classroom.save
@@ -53,7 +60,7 @@ class ClassroomsController < ApplicationController
       if @classroom.students.count >= 9
         @classroom.update(status: 'En clase')
       end
-      redirect_to admin_index_path, notice: 'Classroom was successfully updated.'
+      redirect_to admin_dashboard_path, notice: 'Classroom was successfully updated.'
     else
       render :edit, status: :unprocessable_entity
     end
@@ -64,6 +71,10 @@ class ClassroomsController < ApplicationController
     redirect_to classrooms_url, notice: 'Classroom was successfully destroyed.'
   end
 
+  def index_for_user
+    @classrooms = current_user.classrooms  # Asume que has configurado las asociaciones correctamente.
+    render 'index'  # Reutiliza la vista index si es aplicable, o crea una nueva vista si es necesario.
+  end
 
   private
 
@@ -77,9 +88,11 @@ class ClassroomsController < ApplicationController
   end
 
   def classroom_params
-    params.require(:classroom).permit(:teacher_id, :day_count, :hours_per_class, :price_per_student, :status)
+    params.require(:classroom).permit(:teacher_id, :day_count, :hours_per_class, :price_per_student, :status, :workshop_id, class_sessions_attributes: [:id, :session_date, :start_time, :end_time, :_destroy])
   end
 
-
+  def set_workshop
+    @workshop = Workshop.find_by(id: @classroom.workshop_id) if @classroom.workshop_id
+  end
 
 end

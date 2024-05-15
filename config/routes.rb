@@ -5,11 +5,17 @@ Rails.application.routes.draw do
     registrations: 'registrations'
   }
 
-  resources :users, only: [:destroy, :show] do
-    member do
-      get :profile, as: 'profile'
-    end
+  # Definir ruta de perfil fuera de resources :users
+# config/routes.rb
+get 'profile', to: 'users#profile', as: 'user_profile'
+
+
+
+resources :users, only: [:destroy, :show] do
+  member do
+    get :profile, as: 'profile'
   end
+end
 
   namespace :admin do
     get 'dashboard', to: 'dashboard#index'
@@ -22,7 +28,10 @@ Rails.application.routes.draw do
   resources :class_sessions
 
   resources :workshops do
-    resources :lessons
+    resources :lessons do
+      member do
+        post 'toggle_completion'
+      end
+    end
   end
-
 end

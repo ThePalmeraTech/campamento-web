@@ -1,6 +1,3 @@
-<!-- Incluir CSS de CodeMirror -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
-
 <!-- app/views/lessons/edit.html.erb -->
 <h1>Editar Lección</h1>
 
@@ -21,17 +18,21 @@
   <%= f.button :submit, 'Save Changes', class: 'btn btn-success' %>
 <% end %>
 
-<!-- Scripts for CodeMirror -->
+<!-- CodeMirror CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+
+<!-- CodeMirror JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     var editor = CodeMirror.fromTextArea(document.getElementById('lesson-content'), {
       lineNumbers: true,
-      mode: "htmlmixed",
+      mode: 'htmlmixed',
       htmlMode: true
     });
   });

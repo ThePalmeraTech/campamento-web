@@ -1,10 +1,41 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Home</title>
-</head>
-<body>
-  <h1>Welcome to the Web Development Workshop!</h1>
-  <p>This is the homepage of your new Rails application.</p>
-</body>
-</html>
+<!-- app/views/home/index.html.erb -->
+<div class="container text-white bg-dark mt-5 p-4 rounded">
+  <h1 class="mb-4">¡Hola <%= current_user.full_name %>!</h1>
+
+  <% if @classrooms.any? %>
+    <% @classrooms.each do |classroom| %>
+      <div class="mb-3">
+        <h4>Estás inscripta en el aula <%= classroom.id %></h4>
+        <% if classroom.workshop %>
+          <p>Taller: <%= classroom.workshop.name %></p>
+          <%= link_to 'Entrar', workshop_path(classroom.workshop), class: 'btn btn-primary' %>
+        <% else %>
+          <p>No tienes taller asignado</p>
+        <% end %>
+      </div>
+
+      </div>
+<div class="container p-5">
+      <h4>Compañeros de clase:</h4>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Foto</th>
+            <th>Nombre</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% classroom.students.each do |student| %>
+            <tr>
+              <td><img src="https://placehold.co/100x100" class="img-fluid rounded-circle" alt="Profile Image" width="40"></td>
+              <td><%= student.full_name %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+  <% else %>
+    <p>No estás inscrito en ninguna aula actualmente.</p>
+
+  <% end %>
+</div>
