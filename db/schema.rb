@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_05_12_215319) do
+ActiveRecord::Schema[7.0].define(version: 2024_05_16_063158) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -118,6 +118,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_12_215319) do
     t.boolean "has_reliable_computer"
     t.text "feedback_on_previous_courses"
     t.boolean "approved", default: false
+    t.string "payment_method"
+    t.string "payment_option"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

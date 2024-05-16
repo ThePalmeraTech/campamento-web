@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  attr_accessor :payment_option
+
   has_many :classroom_students, dependent: :destroy
   has_many :classrooms, through: :classroom_students
   has_one_attached :full_payment_proof

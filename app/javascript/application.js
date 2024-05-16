@@ -1,7 +1,8 @@
-// Configure your import map in config/importmap.rb. Read more: https://github.com/rails/importmap-rails
 import "@hotwired/turbo-rails"
-import "controllers"
+import "./controllers/application_controller"
+import "@rails/ujs"
+import * as bootstrap from "bootstrap"
+import "@popperjs/core"
 
-// app/javascript/application.js
-import Rails from "@rails/ujs";
-Rails.start();
+// Exponer Bootstrap globalmente
+window.bootstrap = bootstrap

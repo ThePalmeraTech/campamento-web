@@ -9,6 +9,7 @@
             <th>Email</th>
             <th>Nombre</th>
             <th>Aprobado</th>
+            <th>Tipo de Pago</th> <!-- Nueva columna para el tipo de pago -->
             <th>Acciones</th>
             <th>Perfil</th>
           </tr>
@@ -19,6 +20,7 @@
               <td><%= student.email %></td>
               <td><%= student.full_name %></td>
               <td><%= student.approved ? 'Sí' : 'No' %></td>
+              <td><%= student.payment_option&.capitalize || 'No especificado' %></td> <!-- Mostrar el tipo de pago o 'No especificado' si es nil -->
               <td>
                 <%= form_with model: student, url: admin_approve_user_path(student), method: :patch do |f| %>
                   <%= f.hidden_field :approved, value: true %>
@@ -34,6 +36,7 @@
       <p>No hay estudiantes registrados.</p>
     <% end %>
   </section>
+
 
   <section>
     <h3>Aulas</h3>

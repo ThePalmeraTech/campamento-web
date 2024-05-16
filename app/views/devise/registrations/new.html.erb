@@ -1,123 +1,170 @@
 <style>
-  body {
-  background-color: #343a40;
-  color: #fff;
-}
+ body {
+    background-color: #343a40;
+    color: #fff;
+  }
 
-.nav-underline .nav-link {
-  color: #adb5bd;
-}
+  .nav-underline .nav-link {
+    color: #adb5bd;
+  }
 
-.nav-underline .nav-link.active {
-  color: #007bff;
-  border-color: #007bff;
-}
+  .nav-underline .nav-link.active {
+    color: #007bff;
+    border-color: #007bff;
+  }
 
-.form-control, .form-select, .form-check-input {
-  background-color: #495057;
-  color: #fff;
-  border-color: #6c757d;
-}
+  .form-control, .form-select, .form-check-input {
+    background-color: #495057;
+    color: #fff;
+    border-color: #6c757d;
+  }
 
-.form-control::placeholder {
-  color: #ced4da;
-}
+  .form-control::placeholder {
+    color: #ced4da;
+  }
 
-.btn-primary {
-  background-color: #007bff;
-  border-color: #007bff;
-}
+  .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+  }
 
+  .btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+  }
+
+  .step {
+    display: none;
+    padding: 20px;
+    border: 1px solid #ced4da;
+    margin-top: 20px;
+    border-radius: 0.25rem;
+  }
+
+  .step-active {
+    display: block;
+  }
+
+  .step-completed {
+    background-color: #198754; /* Verde, indicando completado */
+    color: #ffffff;
+  }
+
+  /* Estilos personalizados para inputs de archivo */
+  .custom-file-input {
+    visibility: hidden;
+    width: 0;
+    height: 0;
+  }
+
+  .custom-file-label {
+    display: inline-block;
+    padding: 0.375rem 0.75rem;
+    color: #495057;
+    text-align: center;
+    background-color: #e9ecef;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    cursor: pointer;
+  }
+
+  .custom-file-label:hover {
+    background-color: #dee2e6;
+  }
+
+  .custom-file-label::after {
+    content: 'Seleccionar archivo';
+  }
+
+  .custom-file-input {
+    display: none;
+  }
+
+  .custom-file-label {
+    display: block;
+    cursor: pointer;
+    text-align: center;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 0.25rem; /* Faltaba cerrar esta propiedad */
+  }
 
 </style>
-<%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: 'form-horizontal' }) do |f| %>
+<!-- app/views/devise/registrations/new.html.erb -->
+
+<%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: 'form-horizontal', data: { controller: "payment" } }) do |f| %>
   <%= f.error_notification %>
 
-  <% if resource.errors.any? %>
+  <% if @user.errors.any? %>
     <div class="alert alert-danger">
       <p>Se encontraron errores:</p>
       <ul>
-        <% resource.errors.full_messages.each do |message| %>
+        <% @user.errors.full_messages.each do |message| %>
           <li><%= message %></li>
         <% end %>
       </ul>
     </div>
   <% end %>
 
-  <fieldset class="mb-3">
-    <legend>Información personal básica:</legend>
-    <%= f.input :full_name, required: true, autofocus: true, input_html: { class: 'form-control', autocomplete: 'name' } %>
-    <%= f.input :email, required: true, input_html: { class: 'form-control', autocomplete: 'email' } %>
-    <%= f.input :password, required: true, input_html: { class: 'form-control', autocomplete: 'new-password' }, hint: "Minimum 6 characters long" %>
-    <%= f.input :password_confirmation, required: true, input_html: { class: 'form-control', autocomplete: 'new-password' } %>
-    <%= f.input :phone, input_html: { class: 'form-control', autocomplete: 'tel' } %>
-    <%= f.input :age, input_html: { class: 'form-control', autocomplete: 'bday' } %>
-    <%= f.input :country, as: :select, collection: ['Panamá', 'Colombia', 'Otro'], input_html: { class: 'form-select' } %>
-    <%= f.input :city, input_html: { class: 'form-control', autocomplete: 'address-level2' } %>
-  </fieldset>
+  <!-- Paso 1: Información Personal -->
+  <div class="step step-active" data-payment-target="step1">
+    <fieldset class="mb-3">
+      <legend>Información personal básica:</legend>
+      <%= f.input :full_name, required: true, autofocus: true, input_html: { class: 'form-control' } %>
+      <%= f.input :email, required: true, input_html: { class: 'form-control' } %>
+      <%= f.input :password, required: true, input_html: { class: 'form-control' }, autocomplete: "new-password", hint: "Minimum 6 characters long" %>
+      <%= f.input :password_confirmation, required: true, input_html: { class: 'form-control' }, autocomplete: "new-password" %>
+      <%= f.input :phone, input_html: { class: 'form-control' } %>
+      <%= f.input :age, input_html: { class: 'form-control' } %>
+      <%= f.input :country, as: :select, collection: ['Panamá', 'Colombia', 'Otro'], input_html: { class: 'form-select' } %>
+      <%= f.input :city, input_html: { class: 'form-control' } %>
+    </fieldset>
+    <button type="button" class="btn btn-primary" data-action="click->payment#nextStep">Siguiente</button>
+  </div>
 
-  <fieldset class="mb-3">
-    <legend>Experiencia previa en programación web:</legend>
-    <%= f.input :previous_experience, as: :boolean, inline_label: 'Yes, I have experience with HTML & CSS', input_html: { class: 'form-check-input' } %>
-    <%= f.input :previous_courses, as: :boolean, inline_label: 'Yes, I have taken other web programming courses', input_html: { class: 'form-check-input' } %>
-    <%= f.input :programming_skill_level, collection: ['Beginner', 'Intermediate', 'Advanced'], prompt: "Select one", input_html: { class: 'form-select' } %>
-  </fieldset>
+  <!-- Paso 2: Selección de Método de Pago y Subir Comprobante -->
+  <div class="step" data-payment-target="step2">
+    <fieldset class="mb-3">
+      <legend>Método de pago y comprobante:</legend>
+      <%= f.input :payment_method, as: :select, collection: [["Yappy", "yappy"], ["ACH", "ach"]], prompt: "Seleccione un método de pago", input_html: { class: 'form-select', data: { action: "change->payment#showPaymentInfo", payment_target: "paymentMethod" } } %>
 
-  <fieldset class="mb-3">
-    <legend>Motivación y objetivos:</legend>
-    <%= f.input :motivation, as: :text, input_html: { class: 'form-control' } %>
-    <%= f.input :course_expectations, as: :text, input_html: { class: 'form-control' } %>
-    <%= f.input :specific_goals, as: :text, input_html: { class: 'form-control' } %>
-  </fieldset>
-
-  <fieldset class="mb-3">
-    <legend>Herramientas y recursos disponibles:</legend>
-    <%= f.input :has_reliable_computer, as: :boolean, inline_label: 'I have a reliable computer and internet access', input_html: { class: 'form-check-input' } %>
-  </fieldset>
-
-  <fieldset class="mb-3">
-    <legend>Feedback previo sobre cursos similares:</legend>
-    <%= f.input :feedback_on_previous_courses, as: :text, input_html: { class: 'form-control' } %>
-  </fieldset>
-
-  <!-- Bootstrap Underline Tabs for Payment Proof -->
-  <fieldset class="mb-3">
-    <legend>Comprobante de pago:</legend>
-    <ul class="nav nav-underline mb-3" id="paymentProofTab" role="tablist">
-      <li class="nav-item" role="presentation">
-        <a class="nav-link active" id="full-payment-tab" data-bs-toggle="tab" href="#full-payment" role="tab" aria-controls="full-payment" aria-selected="true">Comprobante de pago completo</a>
-      </li>
-      <li class="nav-item" role="presentation">
-        <a class="nav-link" id="reservation-payment-tab" data-bs-toggle="tab" href="#reservation-payment" role="tab" aria-controls="reservation-payment" aria-selected="false">Comprobante de pago de reserva</a>
-      </li>
-    </ul>
-    <div class="tab-content" id="paymentProofTabContent">
-      <div class="tab-pane fade show active" id="full-payment" role="tabpanel" aria-labelledby="full-payment-tab">
-        <%= f.input :full_payment_proof, as: :file, label: false, input_html: { class: 'form-control mt-2' } %>
+      <!-- Información para Yappy -->
+      <div data-payment-target="yappyInfo" class="d-none">
+        <p>Envía tu yappy al 6250-8252</p>
+        <%= f.input :payment_option, as: :select, collection: [['Pago Completo', 'full'], ['Pago de Reserva', 'reservation']], prompt: "Seleccione tipo de pago", input_html: { class: 'form-select', data: { action: "change->payment#showPaymentProof", payment_target: "paymentOption" } } %>
+        <div data-payment-target="fullPaymentProof" class="d-none">
+          <p>Importe: $60 USD</p>
+          <%= f.input :full_payment_proof, as: :file, label: "Subir comprobante de pago completo", input_html: { class: 'form-control' } %>
+        </div>
+        <div data-payment-target="reservationPaymentProof" class="d-none">
+          <p>Importe: $30 USD</p>
+          <%= f.input :reservation_payment_proof, as: :file, label: "Subir comprobante de pago de reserva", input_html: { class: 'form-control' } %>
+        </div>
       </div>
-      <div class="tab-pane fade" id="reservation-payment" role="tabpanel" aria-labelledby="reservation-payment-tab">
-        <%= f.input :reservation_payment_proof, as: :file, label: false, input_html: { class: 'form-control mt-2' } %>
-      </div>
-    </div>
-  </fieldset>
 
-  <%= f.button :submit, "Sign up", class: 'btn btn-primary mt-3' %>
+      <!-- Información para ACH -->
+      <div data-payment-target="achInfo" class="d-none">
+        <p>Número de cuenta: 04035458930</p>
+        <p>Nombre de la cuenta: Hanaley Mosley</p>
+        <p>Tipo de cuenta: Ahorro</p>
+        <%= f.input :payment_option, as: :select, collection: [['Pago Completo', 'full'], ['Pago de Reserva', 'reservation']], prompt: "Seleccione tipo de pago", input_html: { class: 'form-select', data: { action: "change->payment#showPaymentProof", payment_target: "paymentOption" } } %>
+        <div data-payment-target="fullPaymentProof" class="d-none">
+          <p>Importe: $60 USD</p>
+          <%= f.input :full_payment_proof, as: :file, label: "Subir comprobante de pago completo", input_html: { class: 'form-control' } %>
+        </div>
+        <div data-payment-target="reservationPaymentProof" class="d-none">
+          <p>Importe: $30 USD</p>
+          <%= f.input :reservation_payment_proof, as: :file, label: "Subir comprobante de pago de reserva", input_html: { class: 'form-control' } %>
+        </div>
+      </div>
+    </fieldset>
+<button type="button" class="btn btn-primary" data-action="click->payment#nextStep">Siguiente</button>
+
+
+    <%= f.button :submit, "Sign up", class: 'btn btn-primary mt-3' %>
+  </div>
 <% end %>
 
 <%= render "devise/shared/links" %>
-
-<!-- Inicializar Bootstrap Tabs -->
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var triggerTabList = [].slice.call(document.querySelectorAll('#paymentProofTab a'));
-    triggerTabList.forEach(function (triggerEl) {
-      var tabTrigger = new bootstrap.Tab(triggerEl);
-
-      triggerEl.addEventListener('click', function (event) {
-        event.preventDefault();
-        tabTrigger.show();
-      });
-    });
-  });
-</script>
-

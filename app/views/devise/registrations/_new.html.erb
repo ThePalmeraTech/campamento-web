@@ -1,4 +1,5 @@
-<%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: 'form-horizontal' }) do |f| %>
+<!-- app/views/devise/registrations/new.html.erb -->
+<%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: 'form-horizontal', data: { controller: "payment" } }) do |f| %>
   <%= f.error_notification %>
 
   <% if @user.errors.any? %>
@@ -51,23 +52,22 @@
   <!-- Bootstrap Underline Tabs for Payment Proof -->
   <fieldset class="mb-3">
     <legend>Comprobante de pago:</legend>
-    <ul class="nav nav-underline mb-3" id="paymentProofTab" role="tablist">
-      <li class="nav-item" role="presentation">
-        <a class="nav-link active" id="full-payment-tab" data-bs-toggle="tab" href="#full-payment" role="tab" aria-controls="full-payment" aria-selected="true">Comprobante de pago completo</a>
-      </li>
-      <li class="nav-item" role="presentation">
-        <a class="nav-link" id="reservation-payment-tab" data-bs-toggle="tab" href="#reservation-payment" role="tab" aria-controls="reservation-payment" aria-selected="false">Comprobante de pago de reserva</a>
-      </li>
-    </ul>
-    <div class="tab-content" id="paymentProofTabContent">
-      <div class="tab-pane fade show active" id="full-payment" role="tabpanel" aria-labelledby="full-payment-tab">
-        <%= f.input :full_payment_proof, as: :file, label: false, input_html: { class: 'form-control mt-2' } %>
-      </div>
-      <div class="tab-pane fade" id="reservation-payment" role="tabpanel" aria-labelledby="reservation-payment-tab">
-        <%= f.input :reservation_payment_proof, as: :file, label: false, input_html: { class: 'form-control mt-2' } %>
-      </div>
-    </div>
+    <%= f.input :payment_method, as: :select, collection: [["Yappy", "yappy"], ["ACH", "ach"]], prompt: "Seleccione un método de pago", input_html: { class: 'form-select', data: { action: "change->payment#showPaymentInfo" }, payment_target: "paymentMethod" } %>
   </fieldset>
+
+  <!-- Información para Yappy -->
+  <div data-payment-target="yappyInfo" class="d-none">
+    <p>Envía tu yappy al 6250-8252</p>
+    <%= f.input :yappy_proof, as: :file, label: false, input_html: { class: 'form-control mt-2' } %>
+  </div>
+
+  <!-- Información para ACH -->
+  <div data-payment-target="achInfo" class="d-none">
+    <p>Número de cuenta: 04035458930</p>
+    <p>Nombre de la cuenta: Hanley Mosley</p>
+    <p>Tipo de cuenta: Ahorro</p>
+    <%= f.input :ach_proof, as: :file, label: false, input_html: { class: 'form-control mt-2' } %>
+  </div>
 
   <%= f.button :submit, "Sign up", class: 'btn btn-primary mt-3' %>
 <% end %>
