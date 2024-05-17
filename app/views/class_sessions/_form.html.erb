@@ -2,13 +2,13 @@
 <%= f.simple_fields_for :class_sessions do |session_form| %>
   <div class="nested-fields">
     <div class="form-group">
-      <%= session_form.input :session_date, as: :date, label: 'Session Date', input_html: { class: 'form-control' } %>
+      <%= session_form.input :session_date, as: :date, label: 'Session Date', input_html: { class: 'form-control', autocomplete: 'off' }, wrapper_html: { class: 'text-white' } %>
     </div>
     <div class="form-group">
-      <%= session_form.input :start_time, as: :time, label: 'Start Time', input_html: { class: 'form-control' } %>
+      <%= session_form.input :start_time, as: :time, label: 'Start Time', input_html: { class: 'form-control', autocomplete: 'off' }, wrapper_html: { class: 'text-white' } %>
     </div>
     <div class="form-group">
-      <%= session_form.input :end_time, as: :time, label: 'End Time', input_html: { class: 'form-control' } %>
+      <%= session_form.input :end_time, as: :time, label: 'End Time', input_html: { class: 'form-control', autocomplete: 'off' }, wrapper_html: { class: 'text-white' } %>
     </div>
     <%= link_to_remove_association "Remove session", session_form, class: 'btn btn-danger' %>
   </div>

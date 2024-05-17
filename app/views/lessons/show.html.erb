@@ -1,8 +1,8 @@
 <!-- app/views/lessons/show.html.erb -->
+<!-- app/views/lessons/show.html.erb -->
 <div class="container mt-4">
   <h1 class="display-4"><%= @lesson.title %></h1>
-  <div class="mt-3 mb-4 bg-light p-3 rounded">
-    <!-- Usar raw para mostrar el contenido sin escapar -->
+  <div class="mt-3 mb-4 bg-light p-3 rounded text-black">
     <%= raw highlight_prism(@lesson.content) %>
   </div>
 
@@ -17,10 +17,15 @@
       <p>Lección completada.</p>
     <% end %>
 
-    <%= link_to 'Editar', edit_workshop_lesson_path(@workshop, @lesson), class: 'btn btn-primary' %>
+    <!-- Botón Editar visible solo para administradores -->
+    <% if user_signed_in? && current_user.admin? %>
+      <%= link_to 'Editar', edit_workshop_lesson_path(@workshop, @lesson), class: 'btn btn-primary' %>
+    <% end %>
+
     <%= link_to 'Volver a Lecciones', workshop_lessons_path(@workshop), class: 'btn btn-secondary' %>
   </div>
 </div>
+
 
 <!-- Inicializar Prism.js -->
 <script>

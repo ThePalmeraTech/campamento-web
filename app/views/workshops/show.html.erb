@@ -1,17 +1,19 @@
 <!-- app/views/workshops/show.html.erb -->
-<div class="container mt-4">
+<div class="container mt-4 text-white bg-dark p-4 rounded">
   <h1><%= @workshop.name %></h1>
-  <p><%= @workshop.description %></p>
+  <div class="workshop-description">
+    <h3>Descripción</h3>
+    <%= simple_format(@workshop.description, {}, wrapper_tag: "div", wrapper_class: "text-white") %>
+  </div>
   <% if user_signed_in? && current_user.admin? %>
     <div class="mb-3">
       <%= link_to 'Editar Taller', edit_workshop_path(@workshop), class: 'btn btn-warning' %>
       <%= link_to 'Volver a la Lista', workshops_path, class: 'btn btn-secondary' %>
     </div>
   <% end %>
-  <br><br>
   <h3>Lecciones</h3>
 
-  <table class="table">
+  <table class="table table-dark table-striped">
     <thead>
       <tr>
         <th>Título</th>
@@ -25,9 +27,9 @@
           <td><%= lesson.title %></td>
           <td>
             <% if @completed_lessons.include?(lesson.id) %>
-              <span class="badge badge-completed ml-2">Completada</span>
+              <span class="badge bg-success ml-2">Completada</span>
             <% else %>
-              <span class="badge badge-not-completed ml-2">No completada</span>
+              <span class="badge bg-danger ml-2">No completada</span>
             <% end %>
           </td>
           <td>

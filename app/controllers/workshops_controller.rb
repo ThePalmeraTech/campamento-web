@@ -1,6 +1,9 @@
 class WorkshopsController < ApplicationController
   before_action :authenticate_user!
   before_action :check_admin, only: [:index, :new, :create, :edit, :update, :destroy]
+  before_action :set_workshop, only: [:show, :edit, :update, :destroy]
+
+
 
   def index
     @workshops = Workshop.all

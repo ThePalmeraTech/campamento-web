@@ -1,11 +1,10 @@
-<!-- app/views/home/index.html.erb -->
 <div class="container text-white bg-dark mt-5 p-4 rounded">
   <h1 class="mb-4">¡Hola <%= current_user.full_name %>!</h1>
 
   <% if @classrooms.any? %>
     <% @classrooms.each do |classroom| %>
       <div class="mb-3">
-        <h4>Estás inscripta en el aula <%= classroom.id %></h4>
+        <h4>Estás inscrita en el aula <%= classroom.id %></h4>
         <% if classroom.workshop %>
           <p>Taller: <%= classroom.workshop.name %></p>
           <%= link_to 'Entrar', workshop_path(classroom.workshop), class: 'btn btn-primary' %>
@@ -13,29 +12,30 @@
           <p>No tienes taller asignado</p>
         <% end %>
       </div>
-
-      </div>
-<div class="container p-5">
-      <h4>Compañeros de clase:</h4>
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Foto</th>
-            <th>Nombre</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% classroom.students.each do |student| %>
-            <tr>
-              <td><img src="https://placehold.co/100x100" class="img-fluid rounded-circle" alt="Profile Image" width="40"></td>
-              <td><%= student.full_name %></td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
     <% end %>
   <% else %>
     <p>No estás inscrito en ninguna aula actualmente.</p>
-
   <% end %>
+</div>
+
+<div class="container text-white bg-dark p-4 rounded mt-3">
+  <h4>Compañeros de clase:</h4>
+  <table class="table table-dark table-hover">
+    <thead>
+      <tr>
+        <th>Foto</th>
+        <th>Nombre</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @classrooms.each do |classroom| %>
+        <% classroom.students.each do |student| %>
+          <tr>
+            <td><img src="https://placehold.co/100x100" class="img-fluid rounded-circle" alt="Profile Image" width="40"></td>
+            <td><%= student.full_name %></td>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
 </div>

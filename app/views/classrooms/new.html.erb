@@ -1,8 +1,7 @@
-<!-- app/views/classrooms/new.html.erb -->
-<h1>Create New Classroom</h1>
+<h1 class="text-white">Create New Classroom</h1>
 
 <% if @classroom.errors.any? %>
-  <div id="error_explanation">
+  <div id="error_explanation" class="bg-dark text-white p-3 rounded">
     <h2><%= pluralize(@classroom.errors.count, "error") %> prohibited this classroom from being saved:</h2>
     <ul>
       <% @classroom.errors.full_messages.each do |message| %>
@@ -12,29 +11,24 @@
   </div>
 <% end %>
 
-
-<%= simple_form_for(@classroom, html: { 'data-turbo': 'false' }) do |f| %>
+<%= simple_form_for(@classroom, html: { class: 'bg-dark p-3 rounded text-white', 'data-turbo': 'false' }) do |f| %>
   <div class="form-group">
-
- <%= f.collection_select :workshop_id, Workshop.all, :id, :name, {include_blank: 'Please select'}, {class: 'form-select', required: true} %>
+    <%= f.collection_select :workshop_id, Workshop.all, :id, :name, {include_blank: 'Please select'}, {class: 'form-select', required: true} %>
     <%= f.label :teacher_id, "Select a Teacher", class: 'form-label' %>
     <%= f.collection_select :teacher_id, User.where(role: 'admin'), :id, :full_name, {include_blank: 'Please select'}, {class: 'form-select', required: true} %>
     <%= f.input :day_count, label: 'Number of Days', input_html: { type: 'number', min: 1, class: 'form-control', id: 'day_count' } %>
     <%= f.input :hours_per_class, label: 'Hours per Class', input_html: { type: 'number', min: 1, class: 'form-control' } %>
     <%= f.input :price_per_student, label: 'Price per Student ($)', input_html: { type: 'text', class: 'form-control' } %>
 
-    <h4>Class Sessions</h4>
+    <h4 class="text-white">Class Sessions</h4>
     <div id="sessions_container">
       <!-- Los campos de sesión se insertarán aquí -->
     </div>
 
     <%= f.input :status, collection: %w[Abierto En clase Finalizado], prompt: "Select a status", input_html: { class: 'form-select' } %>
-
-
   </div>
   <%= f.button :submit, 'Create Classroom', class: 'btn btn-primary' %>
 <% end %>
-
 
 <script>
   document.addEventListener("turbo:load", function() {
@@ -48,11 +42,11 @@
       for (let i = 0; i < dayCount; i++) {
         sessionsContainer.innerHTML += `
           <div class="form-group">
-            <label>Session Date ${i + 1}</label>
+            <label class="text-white">Session Date ${i + 1}</label>
             <input type="date" class="form-control" name="classroom[class_sessions_attributes][${i}][session_date]">
-            <label>Start Time</label>
+            <label class="text-white">Start Time</label>
             <input type="time" class="form-control" name="classroom[class_sessions_attributes][${i}][start_time]">
-            <label>End Time</label>
+            <label class="text-white">End Time</label>
             <input type="time" class="form-control" name="classroom[class_sessions_attributes][${i}][end_time]">
           </div>
         `;

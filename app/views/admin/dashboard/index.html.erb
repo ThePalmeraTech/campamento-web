@@ -1,15 +1,14 @@
-<!-- Dentro de app/views/admin/dashboard/index.html.erb -->
 <div class="container mt-4">
   <section>
-    <h3>Estudiantes</h3>
+    <h3 class="text-white">Estudiantes</h3>
     <% if @students.any? %>
-      <table class="table table-striped">
-        <thead class="table-dark">
+      <table class="table table-dark table-striped">
+        <thead>
           <tr>
             <th>Email</th>
             <th>Nombre</th>
             <th>Aprobado</th>
-            <th>Tipo de Pago</th> <!-- Nueva columna para el tipo de pago -->
+            <th>Tipo de Pago</th>
             <th>Acciones</th>
             <th>Perfil</th>
           </tr>
@@ -20,7 +19,7 @@
               <td><%= student.email %></td>
               <td><%= student.full_name %></td>
               <td><%= student.approved ? 'Sí' : 'No' %></td>
-              <td><%= student.payment_option&.capitalize || 'No especificado' %></td> <!-- Mostrar el tipo de pago o 'No especificado' si es nil -->
+              <td><%= student.payment_option&.capitalize || 'No especificado' %></td>
               <td>
                 <%= form_with model: student, url: admin_approve_user_path(student), method: :patch do |f| %>
                   <%= f.hidden_field :approved, value: true %>
@@ -33,15 +32,14 @@
         </tbody>
       </table>
     <% else %>
-      <p>No hay estudiantes registrados.</p>
+      <p class="text-white">No hay estudiantes registrados.</p>
     <% end %>
   </section>
 
-
   <section>
-    <h3>Aulas</h3>
-    <table class="table table-striped">
-      <thead class="table-dark">
+    <h3 class="text-white">Aulas</h3>
+    <table class="table table-dark table-striped">
+      <thead>
         <tr>
           <th>ID</th>
           <th>Estado</th>
@@ -55,9 +53,9 @@
             <td><%= classroom.id %></td>
             <td><%= classroom.status %></td>
             <td>
-              <%= link_to 'Show', classroom, class: 'btn btn-primary btn-sm' %>
-              <%= link_to 'Edit', edit_classroom_path(classroom), class: 'btn btn-warning btn-sm' %>
-              <%= link_to 'Delete', classroom, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
+              <%= link_to 'Mostrar', classroom, class: 'btn btn-primary btn-sm' %>
+              <%= link_to 'Editar', edit_classroom_path(classroom), class: 'btn btn-warning btn-sm' %>
+              <%= link_to 'Eliminar', classroom, method: :delete, data: { confirm: '¿Estás seguro?' }, class: 'btn btn-danger btn-sm' %>
             </td>
             <td>
               <%= simple_form_for(classroom, url: admin_classroom_path(classroom), method: :patch) do |f| %>
@@ -73,9 +71,9 @@
   </section>
 
   <section>
-    <h3>Coders</h3>
-    <table class="table table-striped">
-      <thead class="table-dark">
+    <h3 class="text-white">Coders</h3>
+    <table class="table table-dark table-striped">
+      <thead>
         <tr>
           <th>Email</th>
           <th>Nombre</th>
@@ -89,9 +87,7 @@
             <td><%= coder.email %></td>
             <td><%= coder.full_name %></td>
             <td><%= coder.approved ? 'Sí' : 'No' %></td>
-           <td><%= link_to 'Ver Perfil', profile_user_path(coder), class: 'btn btn-primary btn-sm' %></td>
-
-
+            <td><%= link_to 'Ver Perfil', profile_user_path(coder), class: 'btn btn-primary btn-sm' %></td>
           </tr>
         <% end %>
       </tbody>

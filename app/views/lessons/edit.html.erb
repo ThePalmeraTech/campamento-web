@@ -1,38 +1,32 @@
-<!-- Incluir CSS de CodeMirror -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+<div class="container mt-4">
+  <h1 class="text-white">Editar Lección</h1>
 
-<!-- app/views/lessons/edit.html.erb -->
-<h1>Editar Lección</h1>
+  <% if @lesson.errors.any? %>
+    <div id="error_explanation" class="alert alert-danger">
+      <h2><%= pluralize(@lesson.errors.count, "error") %> prevented this lesson from being saved:</h2>
+      <ul>
+        <% @lesson.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
 
-<% if @lesson.errors.any? %>
-  <div id="error_explanation" class="alert alert-danger">
-    <h2><%= pluralize(@lesson.errors.count, "error") %> prevented this lesson from being saved:</h2>
-    <ul>
-      <% @lesson.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-    </ul>
-  </div>
-<% end %>
+  <%= simple_form_for([@workshop, @lesson], wrapper: :vertical_form, html: { class: 'bg-dark text-white p-4 rounded' }) do |f| %>
+    <%= f.input :title, label: 'Lesson Title', input_html: { class: 'form-control bg-secondary text-white' } %>
+    <%= f.input :content, label: 'Content', as: :text, input_html: { class: 'form-control bg-secondary text-white', id: 'lesson-content' } %>
+    <%= f.button :submit, 'Save Changes', class: 'btn btn-success' %>
+  <% end %>
+</div>
 
-<%= simple_form_for([@workshop, @lesson]) do |f| %>
-  <%= f.input :title, label: 'Lesson Title', input_html: { class: 'form-control' } %>
-  <%= f.input :content, label: 'Content', as: :text, input_html: { class: 'form-control', id: 'lesson-content' } %>
-  <%= f.button :submit, 'Save Changes', class: 'btn btn-success' %>
-<% end %>
-
-<!-- Scripts for CodeMirror -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     var editor = CodeMirror.fromTextArea(document.getElementById('lesson-content'), {
       lineNumbers: true,
       mode: "htmlmixed",
-      htmlMode: true
+      htmlMode: true,
+      theme: 'material'  // Agregar tema oscuro de CodeMirror si es necesario
     });
   });
 </script>

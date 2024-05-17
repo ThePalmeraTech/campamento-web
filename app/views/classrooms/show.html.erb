@@ -1,6 +1,5 @@
-<!-- app/views/classrooms/show.html.erb -->
 <div class="container mt-4">
-    <div class="card mb-4">
+    <div class="card mb-4 bg-dark text-white">
         <div class="card-body">
             <h4 class="card-title">Información del Aula #<%= @classroom.id %></h4>
             <p class="card-text"><strong>ID:</strong> <%= @classroom.id %></p>
@@ -12,15 +11,15 @@
             <% end %>
             <p><strong>Workshop:</strong> <%= @classroom.workshop ? @classroom.workshop.name : "No Workshop Assigned" %></p>
             <% if @classroom.workshop %>
-              <%= link_to 'View Workshop', workshop_path(@classroom.workshop), class: 'btn btn-info' %>
+              <%= link_to 'View Workshop', workshop_path(@classroom.workshop), class: 'btn btn-primary' %>
             <% end %>
         </div>
     </div>
 
-    <div class="card mb-4">
+    <div class="card mb-4 bg-dark text-white">
         <div class="card-body">
             <h4 class="card-title">Estudiantes</h4>
-            <table class="table">
+            <table class="table table-dark">
                 <thead>
                     <tr>
                         <% if current_user.admin? %>
@@ -45,10 +44,10 @@
         </div>
     </div>
 
-    <div class="card mb-4">
+    <div class="card mb-4 bg-dark text-white">
         <div class="card-body">
             <h4 class="card-title">Sesiones de Clase</h4>
-            <table class="table">
+            <table class="table table-dark">
                 <thead>
                     <tr>
                         <th>Fecha</th>

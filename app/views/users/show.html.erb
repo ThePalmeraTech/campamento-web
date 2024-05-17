@@ -1,6 +1,6 @@
 <div class="container mt-4">
-  <h1>Perfil del Usuario</h1>
-  <div class="card">
+  <h1 class="text-white">Perfil del Usuario</h1>
+  <div class="card bg-dark text-white">
     <div class="card-body">
       <p><strong>Email:</strong> <%= @user.email %></p>
       <p><strong>Nombre Completo:</strong> <%= @user.full_name %></p>
@@ -18,10 +18,8 @@
       <p><strong>Feedback sobre Cursos Previos:</strong> <%= @user.feedback_on_previous_courses %></p>
       <p><strong>Comprobante de Pago:</strong>
         <% if @user.full_payment_proof.attached? %>
-
           <%= image_tag rails_blob_url(@user.full_payment_proof), class: "img-fluid" %>
-
-          <%= link_to "Descargar Comprobante", rails_blob_path(@user.full_payment_proof, disposition: "attachment") %>
+          <%= link_to "Descargar Comprobante", rails_blob_path(@user.full_payment_proof, disposition: "attachment"), class: "btn btn-info" %>
         <% else %>
           No se ha subido comprobante.
         <% end %>

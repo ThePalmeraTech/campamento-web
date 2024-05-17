@@ -31,8 +31,10 @@
     <!-- Columna de Registro -->
     <div class="col-md-6">
      <% if available_student_slots > 0 %>
-  <h2>Sign up</h2>
-  <%= render "devise/registrations/new" %>
+  <h2 class="text-center">Sign up</h2><br /><br />
+<%- if devise_mapping.registerable? && controller_name != 'registrations' %>
+  <center><%= link_to "Iniciar Ahora", new_registration_path(resource_name), class: "btn btn-lg btn-primary" %></center><br />
+<% end %>
 <% else %>
 <h1>Los cupos han sido ocupados</h1>
   <h2>El próximo taller comenzará pronto</h2>
