@@ -11,7 +11,7 @@
             <% end %>
             <p><strong>Workshop:</strong> <%= @classroom.workshop ? @classroom.workshop.name : "No Workshop Assigned" %></p>
             <% if @classroom.workshop %>
-              <%= link_to 'View Workshop', workshop_path(@classroom.workshop), class: 'btn btn-primary' %>
+              <%= link_to 'Abrir taller', workshop_path(@classroom.workshop), class: 'btn btn-primary' %>
             <% end %>
         </div>
     </div>

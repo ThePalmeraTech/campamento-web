@@ -48,7 +48,6 @@ gem 'factory_bot_rails'
 gem 'pundit-matchers', '~> 1.6'
 
 
-
 # Use Redis adapter to run Action Cable in production
 # gem "redis", "~> 4.0"
 

@@ -19,8 +19,11 @@ end
 
   namespace :admin do
     get 'dashboard', to: 'dashboard#index'
-    resources :classrooms, only: [:show, :edit, :update, :destroy]
-    patch 'users/:id/approve', to: 'users#approve', as: 'approve_user'
+
+      resources :classrooms, only: [:show, :edit, :update, :destroy]
+      patch 'users/:id/approve', to: 'users#approve', as: 'approve_user'
+
+      resources :coders, only: [:index]  # Asegurando que index responda a JS
   end
 
   get 'waiting_approval', to: 'static_pages#waiting_approval'
@@ -34,4 +37,7 @@ end
       end
     end
   end
+
+  resources :dashboard, only: [:index], controller: 'admin/dashboard'
+
 end

@@ -4,7 +4,7 @@
   <% if @classrooms.any? %>
     <% @classrooms.each do |classroom| %>
       <div class="mb-3">
-        <h4>Estás inscrita en el aula <%= classroom.id %></h4>
+        <h4>Estás inscrit@ en el aula <%= classroom.id %></h4>
         <% if classroom.workshop %>
           <p>Taller: <%= classroom.workshop.name %></p>
           <%= link_to 'Entrar', workshop_path(classroom.workshop), class: 'btn btn-primary' %>

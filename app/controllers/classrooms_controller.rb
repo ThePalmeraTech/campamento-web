@@ -10,8 +10,9 @@ class ClassroomsController < ApplicationController
   def index
     if current_user.admin?
       @classrooms = Classroom.all
+      @classrooms = Classroom.order(created_at: :desc)
     else
-      @classrooms = current_user.classrooms
+      @classrooms = current_user.classrooms.order(created_at: :desc)  
     end
   end
 

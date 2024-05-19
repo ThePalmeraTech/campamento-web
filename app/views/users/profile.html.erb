@@ -62,7 +62,7 @@
             <p><i class="fas fa-comments mr-2"></i><strong>Feedback sobre Cursos Previos:</strong> <%= @user.feedback_on_previous_courses %></p>
             <% if @user.full_payment_proof.attached? %>
               <%= image_tag @user.full_payment_proof, class: "img-fluid" %>
-              <%= link_to "Descargar Comprobante", rails_blob_path(@user.full_payment_proof, disposition: "attachment"), class: "btn btn-primary mt-2" %>
+              <%= link_to "Descargar Comprobante", rails_blob_path(@user.full_payment_proof, disposition: "attachment"),  class: "btn btn-primary mt-2" %>
             <% else %>
               <p>No se ha subido comprobante.</p>
             <% end %>

@@ -22,7 +22,7 @@
               <% end %>
             </td>
             <td>
-              <%= link_to 'Ver', workshop_lesson_path(@workshop, lesson), class: 'btn btn-info btn-sm m-1' %>
+              <%= link_to 'Ver', workshop_lesson_path(@workshop, lesson), class: 'btn btn-primary btn-sm m-1' %>
               <% if user_signed_in? && current_user.admin? %>
                 <%= link_to 'Editar', edit_workshop_lesson_path(@workshop, lesson), class: 'btn btn-primary btn-sm m-1' %>
                 <%= link_to 'Eliminar', workshop_lesson_path(@workshop, lesson), method: :delete, data: { confirm: '¿Estás seguro?' }, class: 'btn btn-danger btn-sm m-1' %>

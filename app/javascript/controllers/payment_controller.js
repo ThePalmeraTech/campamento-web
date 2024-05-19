@@ -1,68 +1,102 @@
-// app/javascript/controllers/payment_controller.js
-
 import { Controller } from "@hotwired/stimulus";
+//import Swal from "sweetalert";
 
 export default class extends Controller {
-  static targets = ["step1", "step2", "paymentMethod", "yappyInfo", "achInfo", "fullPaymentProof", "reservationPaymentProof", "paymentOption"];
+  static targets = ["step", "paymentMethod", "yappyInfo", "achInfo", "fullPaymentProof", "reservationPaymentProof", "paymentOption", "fileInput", "filePreview"];
 
   connect() {
-    console.log("Payment controller connected");
+    this.updateStepVisibility();
+    this.initializeProgressBars();
+  }
+
+  updateStepVisibility() {
+    this.stepTargets.forEach((step, index) => {
+      step.classList.toggle('step-active', index === 0);
+    });
+  }
+
+  nextStep() {
+    const currentStepIndex = this.currentStepIndex();
+    const nextStep = this.stepTargets[currentStepIndex + 1];
+    if (nextStep) {
+      this.stepTargets[currentStepIndex].classList.remove('step-active');
+      nextStep.classList.add('step-active');
+    }
+  }
+
+  currentStepIndex() {
+    return this.stepTargets.findIndex(step => step.classList.contains('step-active'));
+  }
+
+  uploadFile(event) {
+    const input = event.target;
+    const file = input.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const preview = this.filePreviewTarget;
+        preview.src = e.target.result;
+        preview.classList.remove('d-none');
+      };
+      reader.readAsDataURL(file);
+    }
   }
 
   showPaymentInfo() {
     const method = this.paymentMethodTarget.value;
-    this.hideAllPaymentInfo(); // Oculta toda la información antes de mostrar la nueva
-    if (method === "yappy") {
-      this.yappyInfoTarget.classList.remove("d-none");
-    } else if (method === "ach") {
-      this.achInfoTarget.classList.remove("d-none");
-    }
+    this.yappyInfoTarget.classList.toggle("d-none", method !== "yappy");
+    this.achInfoTarget.classList.toggle("d-none", method !== "ach");
   }
 
   showPaymentProof() {
     const option = this.paymentOptionTarget.value;
-    if (option === "full") {
-      this.fullPaymentProofTarget.classList.remove("d-none");
-      this.reservationPaymentProofTarget.classList.add("d-none");
-    } else if (option === "reservation") {
-      this.reservationPaymentProofTarget.classList.remove("d-none");
-      this.fullPaymentProofTarget.classList.add("d-none");
-    }
+    this.fullPaymentProofTarget.classList.toggle("d-none", option !== "full");
+    this.reservationPaymentProofTarget.classList.toggle("d-none", option !== "reservation");
   }
 
-  hideAllPaymentInfo() {
-    this.yappyInfoTarget.classList.add("d-none");
-    this.achInfoTarget.classList.add("d-none");
-    this.fullPaymentProofTarget.classList.add("d-none");
-    this.reservationPaymentProofTarget.classList.add("d-none");
-  }
-
-  nextStep(event) {
-    event.preventDefault(); // Prevenir la acción por defecto si es necesario
-    let currentStep = document.querySelector('.step-active');
-    let nextStep = currentStep.nextElementSibling;
-
-    console.log("Current step:", currentStep);
-    console.log("Next step:", nextStep);
-
-    if (currentStep && nextStep && nextStep.classList.contains('step')) {
-      currentStep.classList.remove('step-active');
-      currentStep.classList.add('step-completed');
-      nextStep.classList.add('step-active');
+  uploadFile(event) {
+    console.log("uploadFile called"); // Diagnóstico para verificar que el método se llama
+    const input = event.target;
+    const file = input.files[0];
+    if (file) {
+      console.log(`File selected: ${file.name}`); // Diagnóstico para verificar que el archivo se ha seleccionado
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const preview = this.filePreviewTarget;
+        preview.src = e.target.result;
+        preview.classList.remove('d-none');
+        console.log("Preview should be visible now"); // Diagnóstico para verificar que la vista previa debería mostrarse
+      };
+      reader.readAsDataURL(file);
     } else {
-      console.error("No next step found or next step is not a 'step' class element.");
+      console.log("No file selected"); // Diagnóstico en caso de que no se seleccione ningún archivo
     }
 }
 
+initializeProgressBars() {
+  document.addEventListener('direct-upload:initialize', event => {
+    console.log("Direct upload initialized");
+    const { target, detail } = event;
+    const progressElement = target.parentNode.querySelector('.progress');
+    progressElement.classList.remove('d-none');
+  });
 
-  previousStep(event) {
-    const currentStep = this.element.querySelector('.step-active');
-    const previousStep = currentStep.previousElementSibling;
+  document.addEventListener('direct-upload:progress', event => {
+    console.log("Direct upload progress");
+    const { target, detail } = event;
+    const { id, progress } = detail;
+    const progressBar = target.parentNode.querySelector('.progress-bar');
+    progressBar.style.width = `${progress}%`;
+    progressBar.setAttribute('aria-valuenow', progress);
+  });
 
-    if (previousStep && previousStep.classList.contains('step')) {
-      currentStep.classList.remove('step-active');
-      previousStep.classList.remove('step-completed');
-      previousStep.classList.add('step-active');
-    }
-  }
+  document.addEventListener('direct-upload:end', event => {
+    console.log("Direct upload ended");
+    const { target, detail } = event;
+    const progressElement = target.parentNode.querySelector('.progress');
+    setTimeout(() => progressElement.classList.add('d-none'), 4500); // Ocultar después de 1.5 segundos
+  });
+}
+
+
 }

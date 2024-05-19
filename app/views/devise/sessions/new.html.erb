@@ -31,16 +31,23 @@
     <!-- Columna de Registro -->
     <div class="col-md-6">
      <% if available_student_slots > 0 %>
-  <h2 class="text-center">Sign up</h2><br /><br />
-<%- if devise_mapping.registerable? && controller_name != 'registrations' %>
-  <center><%= link_to "Iniciar Ahora", new_registration_path(resource_name), class: "btn btn-lg btn-primary" %></center><br />
-<% end %>
-<% else %>
-<h1>Los cupos han sido ocupados</h1>
-  <h2>El próximo taller comenzará pronto</h2>
-  <p>No pierdas tu cupo para el próximo taller apuntándote a la lista de espera. Recibirás una notificación en tu correo electrónico una vez las suscripciones vuelvan a abrir.</p>
-  <a href="#" class="btn btn-info"> Recibir notificación</a>
-<% end %>
+     
+     <!-- Dentro de tu vista de Classroom o donde prefieras -->
+    <div data-controller="countdown" data-countdown-time-value="<%= @classroom.next_session_start_time %>">
+      <h2 id="countdown-display">Tiempo restante: <span data-countdown-target="output"></span></h2>
+    </div>
+
+
+      <h2 class="text-center">Sign up</h2><br /><br />
+    <%- if devise_mapping.registerable? && controller_name != 'registrations' %>
+      <center><%= link_to "Iniciar Ahora", new_registration_path(resource_name), class: "btn btn-lg btn-primary" %></center><br />
+    <% end %>
+    <% else %>
+    <h1>Los cupos han sido ocupados</h1>
+      <h2>El próximo taller comenzará pronto</h2>
+      <p>No pierdas tu cupo para el próximo taller apuntándote a la lista de espera. Recibirás una notificación en tu correo electrónico una vez las suscripciones vuelvan a abrir.</p>
+      <a href="#" class="btn btn-info"> Recibir notificación</a>
+    <% end %>
 
     </div>
   </div>

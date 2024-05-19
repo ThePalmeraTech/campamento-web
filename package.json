@@ -4,6 +4,7 @@
     "@popperjs/core": "^2.11.8",
     "@rails/ujs": "^7.0.0",
     "bootstrap": "^5.3.3",
-    "stimulus": "^3.2.2"
+    "stimulus": "^3.2.2",
+    "sweetalert2": "^11.11.0"
   }
 }
