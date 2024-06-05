@@ -1,9 +1,9 @@
 <!-- app/views/workshops/show.html.erb -->
-<div class="container mt-4 text-white bg-dark p-4 rounded">
+<div class="container mt-4 text-black bg-light p-4 rounded">
   <h1><%= @workshop.name %></h1>
   <div class="workshop-description">
     <h3>Descripción</h3>
-    <%= simple_format(@workshop.description, {}, wrapper_tag: "div", wrapper_class: "text-white") %>
+    <%= simple_format(@workshop.description, {}, wrapper_tag: "div", wrapper_class: "text-black") %>
   </div>
   <% if user_signed_in? && current_user.admin? %>
     <div class="mb-3">
@@ -13,7 +13,7 @@
   <% end %>
   <h3>Lecciones</h3>
 
-  <table class="table table-dark table-striped">
+  <table class="table table-light table-striped">
     <thead>
       <tr>
         <th>Título</th>

@@ -14,7 +14,7 @@ export default class extends Controller {
     if (this.hasNoticeTarget && this.noticeTarget.textContent.trim() !== '') {
       Swal.fire({
         icon: 'success',
-        title: 'Success!',
+        title: 'OK!',
         text: this.noticeTarget.textContent,
         timer: 5000,
         timerProgressBar: true,

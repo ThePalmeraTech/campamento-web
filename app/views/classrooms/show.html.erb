@@ -1,5 +1,5 @@
 <div class="container mt-4">
-    <div class="card mb-4 bg-dark text-white">
+    <div class="card mb-4 bg-light text-black">
         <div class="card-body">
             <h4 class="card-title">Información del Aula #<%= @classroom.id %></h4>
             <p class="card-text"><strong>ID:</strong> <%= @classroom.id %></p>
@@ -16,10 +16,10 @@
         </div>
     </div>
 
-    <div class="card mb-4 bg-dark text-white">
+    <div class="card mb-4 bg-light text-black">
         <div class="card-body">
             <h4 class="card-title">Estudiantes</h4>
-            <table class="table table-dark">
+            <table class="table table-light">
                 <thead>
                     <tr>
                         <% if current_user.admin? %>
@@ -44,10 +44,10 @@
         </div>
     </div>
 
-    <div class="card mb-4 bg-dark text-white">
+    <div class="card mb-4 bg-light text-black">
         <div class="card-body">
             <h4 class="card-title">Sesiones de Clase</h4>
-            <table class="table table-dark">
+            <table class="table table-light">
                 <thead>
                     <tr>
                         <th>Fecha</th>

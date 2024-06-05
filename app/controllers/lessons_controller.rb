@@ -53,13 +53,20 @@ before_action :authorize_lesson, only: [:new, :create, :edit, :update, :destroy]
     if completion
       completion.destroy
       flash[:notice] = 'Lección marcada como no completada.'
+      redirect_to workshop_lesson_path(@lesson.workshop, @lesson)
     else
       LessonCompletion.create!(lesson: @lesson, user: current_user, status: 'completada')
       flash[:notice] = 'Lección marcada como completada.'
+      next_lesson = @lesson.next_lesson
+      if next_lesson
+        redirect_to workshop_lesson_path(@lesson.workshop, next_lesson)
+      else
+        flash[:notice] = '¡Felicidades! Haz completado el taller.'
+        redirect_to workshop_lessons_path(@lesson.workshop)
+      end
     end
-
-    redirect_to workshop_lesson_path(@lesson.workshop, @lesson)
   end
+
 
 
   def next_lesson

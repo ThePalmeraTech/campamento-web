@@ -5,7 +5,9 @@ class Lesson < ApplicationRecord
 
 
   def next_lesson
-    workshop.lessons.where('id > ?', id).order(:id).first
+    current_index = workshop.lessons.order(:id).index(self)
+    workshop.lessons.order(:id)[current_index + 1]
   end
+
 
 end

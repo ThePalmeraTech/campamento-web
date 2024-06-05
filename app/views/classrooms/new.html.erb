@@ -1,7 +1,7 @@
 <h1 class="text-white">Create New Classroom</h1>
 
 <% if @classroom.errors.any? %>
-  <div id="error_explanation" class="bg-dark text-white p-3 rounded">
+  <div id="error_explanation" class="bg-light text-black p-3 rounded">
     <h2><%= pluralize(@classroom.errors.count, "error") %> prohibited this classroom from being saved:</h2>
     <ul>
       <% @classroom.errors.full_messages.each do |message| %>
@@ -11,7 +11,7 @@
   </div>
 <% end %>
 
-<%= simple_form_for(@classroom, html: { class: 'bg-dark p-3 rounded text-white', 'data-turbo': 'false' }) do |f| %>
+<%= simple_form_for(@classroom, html: { class: 'bg-light p-3 rounded text-black', 'data-turbo': 'false' }) do |f| %>
   <div class="form-group">
     <%= f.collection_select :workshop_id, Workshop.all, :id, :name, {include_blank: 'Please select'}, {class: 'form-select', required: true} %>
     <%= f.label :teacher_id, "Select a Teacher", class: 'form-label' %>
@@ -31,15 +31,28 @@
 <% end %>
 
 <script>
-  document.addEventListener("turbo:load", function() {
+  document.addEventListener("DOMContentLoaded", function() {
     const dayCountInput = document.getElementById('day_count');
     const sessionsContainer = document.getElementById('sessions_container');
 
     function updateSessions() {
-      const dayCount = parseInt(dayCountInput.value) || 2; // Default a 2 si está vacío
-      sessionsContainer.innerHTML = ''; // Limpiar contenedor
+      const dayCount = parseInt(dayCountInput.value) || <%= @classroom.class_sessions.size %>;
+      sessionsContainer.innerHTML = '';
 
-      for (let i = 0; i < dayCount; i++) {
+      <% @classroom.class_sessions.each_with_index do |session, index| %>
+        sessionsContainer.innerHTML += `
+          <div class="form-group">
+            <label class="text-white">Session Date ${<%= index + 1 %>}</label>
+            <input type="date" class="form-control" name="classroom[class_sessions_attributes][${<%= index %>}][session_date]" value="<%= session.session_date %>">
+            <label class="text-white">Start Time</label>
+            <input type="time" class="form-control" name="classroom[class_sessions_attributes][${<%= index %>}][start_time]" value="<%= session.start_time.strftime('%H:%M') %>">
+            <label class="text-white">End Time</label>
+            <input type="time" class="form-control" name="classroom[class_sessions_attributes][${<%= index %>}][end_time]" value="<%= session.end_time.strftime('%H:%M') %>">
+          </div>
+        `;
+      <% end %>
+
+      for (let i = <%= @classroom.class_sessions.size %>; i < dayCount; i++) {
         sessionsContainer.innerHTML += `
           <div class="form-group">
             <label class="text-white">Session Date ${i + 1}</label>
@@ -54,6 +67,7 @@
     }
 
     dayCountInput.addEventListener('change', updateSessions);
-    updateSessions(); // Llamar inicialmente para configurar los campos
-  });
+    updateSessions();  // Añade esta línea para inicializar los campos correctamente
+});
+
 </script>

@@ -27,10 +27,15 @@ class Classroom < ApplicationRecord
     students_count * price_per_student
   end
 
+  def next_session_start_time
+    next_session = class_sessions.where("session_date >= ?", Date.today).order(:session_date, :start_time).first
+    next_session&.start_datetime  # Retorna nil si no hay próxima sesión
+  end
+
   private
 
   def update_status_if_full
-    if students.count >= 9 && status != 'En clase'
+    if students.count >= 11 && status != 'En clase'
       update_column(:status, 'En clase')
     end
   end
@@ -43,8 +48,8 @@ class Classroom < ApplicationRecord
   end
 
   def limit_students
-    if students.count >= 9
-      errors.add(:base, 'El aula no puede tener más de 9 estudiantes.')
+    if students.count >= 11
+      errors.add(:base, 'El aula no puede tener más de 11 estudiantes.')
     end
   end
 

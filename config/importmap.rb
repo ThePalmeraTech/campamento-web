@@ -12,3 +12,4 @@ pin "bootstrap", to: "https://ga.jspm.io/npm:bootstrap@5.3.0/dist/js/bootstrap.b
 pin "@popperjs/core", to: "https://unpkg.com/@popperjs/core@2.11.7/dist/umd/popper.min.js"
 # config/importmap.rb
 pin "sweetalert2", to: "https://cdn.skypack.dev/sweetalert2@11"
+pin "prism_turbo_initializer", to: "prism_turbo_initializer.js"

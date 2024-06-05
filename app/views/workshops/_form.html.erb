@@ -1,5 +1,5 @@
 <% if workshop.errors.any? %>
-  <div id="error_explanation" class="bg-danger text-white p-3 rounded">
+  <div id="error_explanation" class="bg-danger text-black p-3 rounded">
     <h2><%= pluralize(workshop.errors.count, "error") %> prohibited this workshop from being saved:</h2>
     <ul>
     <% workshop.errors.full_messages.each do |message| %>
@@ -9,8 +9,8 @@
   </div>
 <% end %>
 
-<%= simple_form_for(workshop, html: { class: 'bg-dark text-white' }) do |f| %>
-  <%= f.input :name, label: 'Nombre del Taller', input_html: { class: 'form-control' }, label_html: { class: 'text-white' } %>
+<%= simple_form_for(workshop, html: { class: 'bg-light text-black' }) do |f| %>
+  <%= f.input :name, label: 'Nombre del Taller', input_html: { class: 'form-control' }, label_html: { class: 'text-black' } %>
   <%= f.input :description, as: :text, input_html: { rows: 3, class: 'form-control' }, label: 'Descripción del Taller', label_html: { class: 'text-white' } %>
   <%= f.button :submit, 'Guardar Taller', class: "btn btn-success" %>
 <% end %>

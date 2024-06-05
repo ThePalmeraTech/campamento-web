@@ -1,5 +1,5 @@
 <div class="container mt-4">
-  <h1 class="text-white">Classrooms</h1>
+  <h1 class="text-black">Classrooms</h1>
 
   <% if current_user.admin? %>
     <div class="my-3">
@@ -11,7 +11,7 @@
     <div class="row">
       <% @classrooms.each do |classroom| %>
         <div class="col-md-6">
-          <div class="card mb-4 bg-dark text-white">
+          <div class="card mb-4 bg-light text-black">
             <div class="card-body">
               <h5 class="card-title">Classroom: <%= classroom.id %></h5>
               <p class="card-text"><strong>Teacher:</strong> <%= classroom.teacher.full_name %></p>
@@ -23,6 +23,6 @@
       <% end %>
     </div>
   <% else %>
-    <p class="text-white">No classrooms available or you are not enrolled in any classrooms.</p>
+    <p class="text-black">No classrooms available or you are not enrolled in any classrooms.</p>
   <% end %>
 </div>

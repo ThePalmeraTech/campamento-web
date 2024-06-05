@@ -12,13 +12,14 @@ class ClassroomsController < ApplicationController
       @classrooms = Classroom.all
       @classrooms = Classroom.order(created_at: :desc)
     else
-      @classrooms = current_user.classrooms.order(created_at: :desc)  
+      @classrooms = current_user.classrooms.order(created_at: :desc)
     end
   end
 
 # app/controllers/classrooms_controller.rb
 def show
   @classroom = Classroom.includes(:students, :workshop).find(params[:id])
+
 end
 
 
@@ -26,7 +27,7 @@ end
   def create
     @classroom = Classroom.new(classroom_params)
     if @classroom.save
-      if @classroom.students.count >= 9
+      if @classroom.students.count >= 11
         @classroom.update(status: 'Completo')
       end
       redirect_to classrooms_path, notice: 'Classroom was successfully created.'
@@ -38,15 +39,19 @@ end
 
   def edit
     @classroom = Classroom.find_by(id: params[:id])
-    if @classroom.nil? || @classroom.status != 'Abierto' || @classroom.students.count >= 9
+    if @classroom.nil? || @classroom.status != 'Abierto' || @classroom.students.count >= 11
       redirect_to classrooms_path, alert: 'Classroom cannot be edited due to its status or student count.'
     end
   end
 
 
+
   def create
     @classroom = Classroom.new(classroom_params)
     if @classroom.save
+      if @classroom.students.count >= 11
+        @classroom.update(status: 'Completo')
+      end
       redirect_to classrooms_path, notice: 'Classroom was successfully created.'
     else
       render :new
@@ -55,10 +60,8 @@ end
 
   def update
     @classroom = Classroom.find(params[:id])
-    # Actualiza el classroom con los nuevos parámetros
     if @classroom.update(classroom_params)
-      # Verifica si se ha alcanzado el número máximo de estudiantes y cambia el estado
-      if @classroom.students.count >= 9
+      if @classroom.students.count >= 11
         @classroom.update(status: 'En clase')
       end
       redirect_to admin_dashboard_path, notice: 'Classroom was successfully updated.'
@@ -80,7 +83,7 @@ end
   private
 
   def set_classroom
-    @classroom = Classroom.where(status: 'Abierto').find_by('students_count < ?', 9)
+    @classroom = Classroom.where(status: 'Abierto').find_by('students_count < ?', 11)
   end
 
 

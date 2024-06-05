@@ -11,5 +11,5 @@ class SessionsController < Devise::SessionsController
       super  # Esto hace que el comportamiento sea el predeterminado de Devise para usuarios no admin.
     end
   end
-  
+
 end
