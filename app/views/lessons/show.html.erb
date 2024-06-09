@@ -5,7 +5,37 @@
     height: calc(100vh - 20px);
     overflow-y: auto; /* Para hacer scroll dentro del sidebar si es muy largo */
   }
+        #resultado {
+            display: none;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+
+        #resultado.show {
+            display: block;
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .profile-sample-section {
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 4rem;
+    background-color: #f9f9f9; /* Color de fondo claro para mayor contraste */
+}
+
+.profile-image {
+    width: 100%;  /* Hace que la imagen se ajuste al ancho del contenedor */
+    height: auto; /* Mantiene la proporción de aspecto de la imagen */
+    border-radius: 50%; /* Hace que la imagen sea completamente redonda */
+}
+
+
+
 </style>
+
 
 <div class="container-fluid mt-4">
   <div class="row">
