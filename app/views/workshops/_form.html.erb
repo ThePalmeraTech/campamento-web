@@ -1,0 +1,37 @@
+<% if workshop.errors.any? %>
+  <div id="error_explanation" class="bg-danger text-black p-3 rounded">
+    <h2><%= pluralize(workshop.errors.count, "error") %> prohibited this workshop from being saved:</h2>
+    <ul>
+    <% workshop.errors.full_messages.each do |message| %>
+      <li><%= message %></li>
+    <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= simple_form_for(workshop, html: { class: 'bg-light text-black' }) do |f| %>
+  <%= f.input :name, label: 'Nombre del Taller', input_html: { class: 'form-control' }, label_html: { class: 'text-black' } %>
+  <%= f.input :description, as: :text, input_html: { rows: 3, class: 'form-control' }, label: 'Descripción del Taller', label_html: { class: 'text-white' } %>
+  <%= f.button :submit, 'Guardar Taller', class: "btn btn-success" %>
+<% end %>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelector('.add_fields').addEventListener('click', function(e) {
+        e.preventDefault();
+        var time = new Date().getTime();
+        var regexp = new RegExp(this.dataset.id, 'g');
+        var newFields = this.dataset.fields.replace(regexp, time);
+        this.insertAdjacentHTML('beforebegin', newFields);
+    });
+
+    document.querySelectorAll('.remove_fields').forEach(function(button) {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            var fieldWrapper = this.closest('.lesson-fields');
+            fieldWrapper.querySelector('input[type=hidden]').value = '1';
+            fieldWrapper.style.display = 'none';
+        });
+    });
+});
+</script>

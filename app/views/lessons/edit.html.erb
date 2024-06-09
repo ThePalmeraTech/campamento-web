@@ -1,0 +1,32 @@
+<div class="container mt-4">
+  <h1 class="text-black">Editar Lección</h1>
+
+  <% if @lesson.errors.any? %>
+    <div id="error_explanation" class="alert alert-danger">
+      <h2><%= pluralize(@lesson.errors.count, "error") %> prevented this lesson from being saved:</h2>
+      <ul>
+        <% @lesson.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= simple_form_for([@workshop, @lesson], wrapper: :vertical_form, html: { class: 'bg-light text-black p-4 rounded' }) do |f| %>
+    <%= f.input :title, label: 'Lesson Title', input_html: { class: 'form-control bg-secondary' } %>
+    <%= f.input :content, label: 'Content', as: :text, input_html: { class: 'form-control bg-secondary', id: 'lesson-content' } %>
+    <%= f.button :submit, 'Save Changes', class: 'btn btn-success' %>
+  <% end %>
+</div>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var editor = CodeMirror.fromTextArea(document.getElementById('lesson-content'), {
+      lineNumbers: true,
+      mode: "htmlmixed",
+      htmlMode: true,
+      theme: 'material'  // Agregar tema oscuro de CodeMirror si es necesario
+    });
+  });
+</script>

@@ -1,0 +1,25 @@
+<div class="container mt-4 bg-light text-black p-3 rounded">
+  <h1>Workshops</h1>
+  <%= link_to 'New Workshop', new_workshop_path, class: 'btn btn-primary' %>
+
+  <table class="table table-light table-hover">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @workshops.each do |workshop| %>
+        <tr>
+          <td><%= workshop.name %></td>
+          <td>
+            <%= link_to 'Show', workshop, class: 'btn btn-info btn-sm' %>
+            <%= link_to 'Edit', edit_workshop_path(workshop), class: 'btn btn-warning btn-sm' %>
+            <%= link_to 'Delete', workshop, method: :delete, data: { turbo_method: :delete, confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

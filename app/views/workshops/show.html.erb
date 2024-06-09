@@ -1,0 +1,54 @@
+<!-- app/views/workshops/show.html.erb -->
+<div class="container mt-4 text-black bg-light p-4 rounded">
+  <h1><%= @workshop.name %></h1>
+  <div class="workshop-description">
+    <h3>Descripción</h3>
+    <%= simple_format(@workshop.description, {}, wrapper_tag: "div", wrapper_class: "text-black") %>
+  </div>
+  <% if user_signed_in? && current_user.admin? %>
+    <div class="mb-3">
+      <%= link_to 'Editar Taller', edit_workshop_path(@workshop), class: 'btn btn-warning' %>
+      <%= link_to 'Volver a la Lista', workshops_path, class: 'btn btn-secondary' %>
+    </div>
+  <% end %>
+  <h3>Lecciones</h3>
+
+  <table class="table table-light table-striped">
+    <thead>
+      <tr>
+        <th>Título</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @lessons.each do |lesson| %>
+        <tr>
+          <td><%= lesson.title %></td>
+          <td>
+            <% if @completed_lessons.include?(lesson.id) %>
+              <span class="badge bg-success ml-2">Completada</span>
+            <% else %>
+              <span class="badge bg-danger ml-2">No completada</span>
+            <% end %>
+          </td>
+          <td>
+            <% if @completed_lessons.include?(lesson.id) %>
+              <%= link_to 'Repasar lección', workshop_lesson_path(@workshop, lesson), class: 'btn btn-primary btn-sm' %>
+            <% else %>
+              <%= link_to 'Abrir', workshop_lesson_path(@workshop, lesson), class: 'btn btn-primary btn-sm' %>
+            <% end %>
+            <% if user_signed_in? && current_user.admin? %>
+              <%= link_to 'Editar', edit_workshop_lesson_path(@workshop, lesson), class: 'btn btn-primary btn-sm' %>
+              <%= link_to 'Eliminar', workshop_lesson_path(@workshop, lesson), method: :delete, data: { confirm: '¿Estás seguro?' }, class: 'btn btn-danger btn-sm' %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <% if user_signed_in? && current_user.admin? %>
+    <%= link_to 'Añadir Nueva Lección', new_workshop_lesson_path(@workshop), class: 'btn btn-success' %>
+  <% end %>
+</div>

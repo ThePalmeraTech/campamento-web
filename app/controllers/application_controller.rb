@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
   def available_student_slots
     classroom = Classroom.where(status: 'Abierto').first
     if classroom
-      max_students = 9  # Asumiendo que el límite de estudiantes por classroom es 9
+      max_students = 11  # Asumiendo que el límite de estudiantes por classroom es 9
       max_students - (classroom.students_count || 0)
     else
       0  # No hay classrooms abiertos

@@ -1,0 +1,11 @@
+<div class="container mt-4">
+  <h1 class="mb-4 text-black">Crear Nuevo Taller</h1>
+  <div class="card bg-light text-black">
+    <div class="card-body">
+      <%= render 'form', workshop: @workshop %>
+    </div>
+  </div>
+  <div class="mt-3">
+    <%= link_to 'Volver a Talleres', workshops_path, class: 'btn btn-secondary' %>
+  </div>
+</div>

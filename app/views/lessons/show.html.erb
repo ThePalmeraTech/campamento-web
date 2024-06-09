@@ -1,0 +1,92 @@
+<style>
+  .sticky-sidebar {
+    position: sticky;
+    top: 20px; /* Ajusta según el header o navbar si existe */
+    height: calc(100vh - 20px);
+    overflow-y: auto; /* Para hacer scroll dentro del sidebar si es muy largo */
+  }
+        #resultado {
+            display: none;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+
+        #resultado.show {
+            display: block;
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .profile-sample-section {
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 4rem;
+    background-color: #f9f9f9; /* Color de fondo claro para mayor contraste */
+}
+
+.profile-image {
+    width: 100%;  /* Hace que la imagen se ajuste al ancho del contenedor */
+    height: auto; /* Mantiene la proporción de aspecto de la imagen */
+    border-radius: 50%; /* Hace que la imagen sea completamente redonda */
+}
+
+
+
+</style>
+
+
+<div class="container-fluid mt-4">
+  <div class="row">
+    <!-- Sidebar con las lecciones, visible solo en desktop -->
+    <div class="col-md-3 sticky-sidebar d-none d-md-block" data-aos="fade-up-right">
+      <div class="list-group p-4">
+        <% progress = @workshop.progress_for(current_user) %>
+        <div class="progress mb-3">
+          <div class="progress-bar" role="progressbar" style="width: <%= progress %>%;" aria-valuenow="<%= progress %>" aria-valuemin="0" aria-valuemax="100">
+            <%= progress %>% Completado
+          </div>
+        </div>
+        <% @workshop.lessons.order(:id).each do |lesson| %>
+          <%= link_to workshop_lesson_path(@workshop, lesson), class: "list-group-item list-group-item-action #{'active' if @lesson == lesson}" do %>
+            <i class="fa fa-book-reader me-2"></i> <%= lesson.title %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Contenido principal de la lección -->
+    <div class="col-md-9 p-4" data-aos="fade-up-left">
+      <div class="mt-3 mb-4 bg-white p-5 rounded text-black">
+        <%= highlight_prism(@lesson.content) %>
+      </div>
+
+      <div>
+        <% if @lesson.completions.find_by(user: current_user).nil? %>
+          <%= button_to 'Marcar como Completada',
+                        toggle_completion_workshop_lesson_path(@workshop, @lesson),
+                        method: :post,
+                        class: 'btn btn-success',
+                        data: { turbo: true } %>
+        <% else %>
+          <p>Lección completada.</p>
+        <% end %>
+
+        <!-- Botón Editar visible solo para administradores -->
+        <% if user_signed_in? && current_user.admin? %>
+          <%= link_to 'Editar', edit_workshop_lesson_path(@workshop, @lesson), class: 'btn btn-primary' %>
+        <% end %>
+
+        <%= link_to 'Volver a Lecciones', workshop_lessons_path(@workshop), class: 'btn btn-secondary' %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Inicializar Prism.js -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    Prism.highlightAll();
+  });
+</script>

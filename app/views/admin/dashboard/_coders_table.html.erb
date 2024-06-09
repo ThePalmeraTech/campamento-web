@@ -1,0 +1,8 @@
+<% @coders.each do |coder| %>
+  <tr>
+    <td><%= coder.email %></td>
+    <td><%= coder.full_name %></td>
+    <td><%= coder.approved ? 'Sí' : 'No' %></td>
+    <td><%= link_to 'Ver Perfil', profile_user_path(coder), class: 'btn btn-primary btn-sm' %></td>
+  </tr>
+<% end %>

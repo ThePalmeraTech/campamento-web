@@ -1,8 +1,7 @@
-<!-- app/views/classrooms/edit.html.erb -->
-<h1>Edit Classroom</h1>
+<h1 class="text-black">Editar Aula</h1>
 
 <% if @classroom.errors.any? %>
-  <div id="error_explanation">
+  <div id="error_explanation" class="bg-light text-black p-3 rounded">
     <h2><%= pluralize(@classroom.errors.count, "error") %> prohibited this classroom from being updated:</h2>
     <ul>
       <% @classroom.errors.full_messages.each do |message| %>
@@ -12,16 +11,17 @@
   </div>
 <% end %>
 
-<%= simple_form_for(@classroom, url: classroom_path(@classroom), method: :patch, html: { 'data-turbo': 'false' }) do |f| %>
+<%= simple_form_for(@classroom, url: classroom_path(@classroom), method: :patch, html: { 'data-turbo': 'false', class: 'bg-light text-white p-3 rounded' }) do |f| %>
   <div class="form-group">
-    <%= f.label :teacher_id, "Select a Teacher", class: 'form-label' %>
+    <%= f.collection_select :workshop_id, Workshop.all, :id, :name, {include_blank: 'Please select'}, {class: 'form-select', required: true} %>
+    <%= f.label :teacher_id, "Select a Teacher", class: 'form-label text-black' %>
     <%= f.collection_select :teacher_id, User.where(role: 'admin'), :id, :full_name, {include_blank: 'Please select'}, {class: 'form-select', required: true} %>
     <%= f.input :day_count, label: 'Number of Days', input_html: { type: 'number', min: 1, class: 'form-control', id: 'day_count', value: @classroom.day_count } %>
     <%= f.input :hours_per_class, label: 'Hours per Class', input_html: { type: 'number', min: 1, class: 'form-control', value: @classroom.hours_per_class } %>
     <%= f.input :price_per_student, label: 'Price per Student ($)', input_html: { type: 'text', class: 'form-control', value: @classroom.price_per_student } %>
 
-    <h4>Class Sessions</h4>
-    <div id="sessions_container">
+    <h4 class="text-black">Class Sessions</h4>
+    <div id="sessions_container" class="text-black">
       <!-- JavaScript actualizará los campos de sesión aquí -->
     </div>
 
@@ -31,36 +31,35 @@
 <% end %>
 
 <script>
-  document.addEventListener("turbo:load", function() {
+  document.addEventListener("DOMContentLoaded", function() {
     const dayCountInput = document.getElementById('day_count');
     const sessionsContainer = document.getElementById('sessions_container');
 
     function updateSessions() {
-      const dayCount = parseInt(dayCountInput.value) || <%= @classroom.class_sessions.size %>; // Usa el número actual de sesiones si no se especifica otro
+      const dayCount = parseInt(dayCountInput.value) || <%= @classroom.class_sessions.size %>;
       sessionsContainer.innerHTML = '';
 
       <% @classroom.class_sessions.each_with_index do |session, index| %>
         sessionsContainer.innerHTML += `
           <div class="form-group">
-            <label>Session Date ${<%= index + 1 %>}</label>
+            <label class="text-white">Session Date ${<%= index + 1 %>}</label>
             <input type="date" class="form-control" name="classroom[class_sessions_attributes][${<%= index %>}][session_date]" value="<%= session.session_date %>">
-            <label>Start Time</label>
+            <label class="text-white">Start Time</label>
             <input type="time" class="form-control" name="classroom[class_sessions_attributes][${<%= index %>}][start_time]" value="<%= session.start_time.strftime('%H:%M') %>">
-            <label>End Time</label>
+            <label class="text-white">End Time</label>
             <input type="time" class="form-control" name="classroom[class_sessions_attributes][${<%= index %>}][end_time]" value="<%= session.end_time.strftime('%H:%M') %>">
           </div>
         `;
       <% end %>
 
-      // Agregar campos adicionales si el usuario aumenta el número de días
       for (let i = <%= @classroom.class_sessions.size %>; i < dayCount; i++) {
         sessionsContainer.innerHTML += `
           <div class="form-group">
-            <label>Session Date ${i + 1}</label>
+            <label class="text-white">Session Date ${i + 1}</label>
             <input type="date" class="form-control" name="classroom[class_sessions_attributes][${i}][session_date]">
-            <label>Start Time</label>
+            <label class="text-white">Start Time</label>
             <input type="time" class="form-control" name="classroom[class_sessions_attributes][${i}][start_time]">
-            <label>End Time</label>
+            <label class="text-white">End Time</label>
             <input type="time" class="form-control" name="classroom[class_sessions_attributes][${i}][end_time]">
           </div>
         `;
@@ -68,6 +67,7 @@
     }
 
     dayCountInput.addEventListener('change', updateSessions);
-    // No llamar updateSessions() aquí para evitar sobrescribir los valores iniciales
-  });
+    updateSessions();  // Añade esta línea para inicializar los campos correctamente
+});
+
 </script>

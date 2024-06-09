@@ -1,14 +1,14 @@
-<!-- Dentro de app/views/admin/dashboard/index.html.erb -->
 <div class="container mt-4">
   <section>
-    <h3>Estudiantes</h3>
+    <h3 class="text-black">Estudiantes</h3>
     <% if @students.any? %>
-      <table class="table table-striped">
-        <thead class="table-dark">
+      <table class="table table-light table-striped">
+        <thead>
           <tr>
             <th>Email</th>
             <th>Nombre</th>
             <th>Aprobado</th>
+            <th>Tipo de Pago</th>
             <th>Acciones</th>
             <th>Perfil</th>
           </tr>
@@ -19,26 +19,27 @@
               <td><%= student.email %></td>
               <td><%= student.full_name %></td>
               <td><%= student.approved ? 'Sí' : 'No' %></td>
+              <td><%= student.payment_option&.capitalize || 'No especificado' %></td>
               <td>
                 <%= form_with model: student, url: admin_approve_user_path(student), method: :patch do |f| %>
                   <%= f.hidden_field :approved, value: true %>
                   <%= f.submit "Aprobar", class: 'btn btn-success btn-sm' %>
                 <% end %>
               </td>
-              <td><%= link_to 'Ver Perfil', profile_user_path(student), class: 'btn btn-info btn-sm' %></td>
+              <td><%= link_to 'Ver Perfil', profile_user_path(student), class: 'btn btn-primary btn-sm' %></td>
             </tr>
           <% end %>
         </tbody>
       </table>
     <% else %>
-      <p>No hay estudiantes registrados.</p>
+      <p class="text-black">No hay estudiantes registrados.</p>
     <% end %>
   </section>
 
   <section>
-    <h3>Aulas</h3>
-    <table class="table table-striped">
-      <thead class="table-dark">
+    <h3 class="text-black">Aulas</h3>
+    <table class="table table-light table-striped">
+      <thead>
         <tr>
           <th>ID</th>
           <th>Estado</th>
@@ -52,44 +53,55 @@
             <td><%= classroom.id %></td>
             <td><%= classroom.status %></td>
             <td>
-              <%= link_to 'Show', classroom, class: 'btn btn-primary btn-sm' %>
-              <%= link_to 'Edit', edit_classroom_path(classroom), class: 'btn btn-warning btn-sm' %>
-              <%= link_to 'Delete', classroom, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
+              <%= link_to 'Mostrar', classroom, class: 'btn btn-primary btn-sm' %>
+              <%= link_to 'Editar', edit_classroom_path(classroom), class: 'btn btn-warning btn-sm' %>
+              <%= link_to 'Eliminar', classroom, method: :delete, data: { confirm: '¿Estás seguro?' }, class: 'btn btn-danger btn-sm' %>
             </td>
             <td>
               <%= simple_form_for(classroom, url: admin_classroom_path(classroom), method: :patch) do |f| %>
                 <%= f.input :status, collection: ['Abierto', 'Completo', 'Finalizado'], include_blank: false, label: false, input_html: { class: 'form-control' } %>
-                <%= f.button :submit, 'Actualizar', class: 'btn btn-info btn-sm' %>
+                <%= f.button :submit, 'Actualizar', class: 'btn btn-primary btn-sm' %>
               <% end %>
             </td>
           </tr>
         <% end %>
       </tbody>
     </table>
-    <%= link_to 'Crear Nuevo Aula', new_classroom_path, class: 'btn btn-success' %>
+    <%= link_to 'Crear Nuevo Aula', new_classroom_path, class: 'btn btn-success btn-sm' %>
   </section>
 
   <section>
-    <h3>Coders</h3>
-    <table class="table table-striped">
-      <thead class="table-dark">
-        <tr>
-          <th>Email</th>
-          <th>Nombre</th>
-          <th>Aprobado</th>
-          <th>Perfil</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @coders.each do |coder| %>
-          <tr>
-            <td><%= coder.email %></td>
-            <td><%= coder.full_name %></td>
-            <td><%= coder.approved ? 'Sí' : 'No' %></td>
-            <td><%= link_to 'Ver Perfil', profile_user_path(coder), class: 'btn btn-info btn-sm' %></td>
-          </tr>
+    <h3 class="text-white">Coders</h3>
+<div data-controller="pagination" data-total-pages="<%= @total_pages %>">
+  Total pages: <%= @total_pages %> <!-- Esto imprimirá el valor en la página para depuración -->
+
+  <table class="table table-light table-striped">
+    <thead>
+      <tr>
+        <th>Email</th>
+        <th>Nombre</th>
+        <th>Aprobado</th>
+        <th>Perfil</th>
+      </tr>
+    </thead>
+    <tbody data-pagination-target="entries">
+      <% @coders.each do |coder| %>
+        <%= content_tag :tr do %>
+          <td><%= coder.email %></td>
+          <td><%= coder.full_name %></td>
+          <td><%= coder.approved ? 'Sí' : 'No' %></td>
+          <td><%= link_to 'Ver Perfil', profile_user_path(coder), class: 'btn btn-primary btn-sm' %></td>
         <% end %>
-      </tbody>
-    </table>
+      <% end %>
+    </tbody>
+  </table>
+  <nav aria-label="Page navigation">
+    <ul class="pagination">
+      <li class="page-item"><button data-action="pagination#prevPage" class="page-link">Anterior</button></li>
+      <li class="page-item"><button data-action="pagination#nextPage" class="page-link">Siguiente</button></li>
+    </ul>
+  </nav>
+</div>
+
   </section>
 </div>

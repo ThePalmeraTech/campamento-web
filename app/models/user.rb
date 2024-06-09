@@ -1,11 +1,16 @@
 class User < ApplicationRecord
+  attr_accessor :payment_option
+
   has_many :classroom_students, dependent: :destroy
   has_many :classrooms, through: :classroom_students
   has_one_attached :full_payment_proof
   has_one_attached :reservation_payment_proof
-
   validate :at_least_one_payment_proof
   validate :must_have_active_classroom, if: -> { role == 'estudiante' }
+
+  has_many :lesson_completions, dependent: :destroy
+
+
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable

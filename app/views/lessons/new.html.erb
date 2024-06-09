@@ -1,0 +1,30 @@
+<!-- app/views/lessons/new.html.erb -->
+<h1>Nueva Lección</h1>
+
+<% if @lesson.errors.any? %>
+  <div id="error_explanation" class="alert alert-danger">
+    <h2><%= pluralize(@lesson.errors.count, "error") %> prevented this lesson from being saved:</h2>
+    <ul>
+      <% @lesson.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= simple_form_for([@workshop, @lesson]) do |f| %>
+  <%= f.input :title, label: 'Lesson Title', input_html: { class: 'form-control' } %>
+  <%= f.input :content, label: 'Content', as: :text, input_html: { class: 'form-control', id: 'lesson-content' } %>
+  <%= f.button :submit, 'Save Changes', class: 'btn btn-success' %>
+<% end %>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var editor = CodeMirror.fromTextArea(document.getElementById('lesson-content'), {
+      lineNumbers: true,
+      mode: 'htmlmixed',
+      htmlMode: true
+    });
+  });
+</script>

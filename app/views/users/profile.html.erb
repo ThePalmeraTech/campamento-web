@@ -1,25 +1,63 @@
 <div class="container mt-4">
-  <h1 class="mb-4">Perfil del Usuario</h1>
+  <h1 class="mb-4 text-black">Tu perfil</h1>
   <div class="row">
     <div class="col-md-6">
-      <div class="card mb-4">
+      <div class="card bg-light text-black mb-4">
         <div class="card-header">
           <h4>Información Básica</h4>
         </div>
         <div class="card-body">
-          <p><i class="fas fa-envelope mr-2"></i><strong>Email:</strong> <%= @user.email %></p>
+          <% if current_user.admin? || current_user == @user %>
+            <p><i class="fas fa-envelope mr-2"></i><strong>Email:</strong> <%= @user.email %></p>
+            <p><i class="fas fa-phone mr-2"></i><strong>Teléfono:</strong> <%= @user.phone || "No proporcionado" %></p>
+          <% end %>
           <p><i class="fas fa-user mr-2"></i><strong>Nombre Completo:</strong> <%= @user.full_name %></p>
-          <p><i class="fas fa-phone mr-2"></i><strong>Teléfono:</strong> <%= @user.phone || "No proporcionado" %></p>
           <p><i class="fas fa-birthday-cake mr-2"></i><strong>Edad:</strong> <%= @user.age || "No especificada" %></p>
           <p><i class="fas fa-globe mr-2"></i><strong>País:</strong> <%= @user.country %></p>
           <p><i class="fas fa-city mr-2"></i><strong>Ciudad:</strong> <%= @user.city %></p>
+        </div>
+      </div>
+
+      <div class="card bg-light text-black mb-4">
+  <div class="card-header">
+    <h4>Clases Inscritas</h4>
+  </div>
+  <div class="card-body">
+    <ul>
+      <% @user.classrooms.each do |classroom| %>
+        <li>
+          <%= classroom.to_label %> - <%= link_to "Detalles", classroom_path(classroom), class: 'text-info' %>
+          <% if classroom.workshop %>
+            <div class="progress" style="height: 20px;">
+              <div class="progress-bar" role="progressbar" style="width: <%= classroom.workshop.progress_for(@user) %>%;" aria-valuenow="<%= classroom.workshop.progress_for(@user) %>" aria-valuemin="0" aria-valuemax="100">
+                <%= classroom.workshop.progress_for(@user) %>% Completado
+              </div>
+            </div>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</div>
+
+
+      <div class="card bg-light text-black">
+        <div class="card-header">
+          <h4>Lecciones Completadas</h4>
+        </div>
+        <div class="card-body">
+          <ul>
+            <% @completed_lessons.each do |lesson| %>
+              <li><%= lesson.title %></li>
+            <% end %>
+          </ul>
         </div>
       </div>
     </div>
 
     <% if current_user.admin? %>
       <div class="col-md-6">
-        <div class="card">
+        <div class="card bg-dark text-white">
           <div class="card-header">
             <h4>Información de Programación</h4>
           </div>
@@ -32,14 +70,12 @@
             <p><i class="fas fa-bullseye mr-2"></i><strong>Objetivos Específicos:</strong> <%= @user.specific_goals %></p>
             <p><i class="fas fa-desktop mr-2"></i><strong>Acceso a Computadora Confiable:</strong> <%= @user.has_reliable_computer ? "Sí" : "No" %></p>
             <p><i class="fas fa-comments mr-2"></i><strong>Feedback sobre Cursos Previos:</strong> <%= @user.feedback_on_previous_courses %></p>
-            <p><i class="fas fa-file-invoice-dollar mr-2"></i><strong>Comprobante de Pago:</strong>
-              <% if @user.full_payment_proof.attached? %>
-                <%= image_tag @user.full_payment_proof, class: "img-fluid" %>
-                <%= link_to "Descargar Comprobante", rails_blob_path(@user.full_payment_proof, disposition: "attachment"), class: "btn btn-primary mt-2" %>
-              <% else %>
-                No se ha subido comprobante.
-              <% end %>
-            </p>
+            <% if @user.full_payment_proof.attached? %>
+              <%= image_tag @user.full_payment_proof, class: "img-fluid" %>
+              <%= link_to "Descargar Comprobante", rails_blob_path(@user.full_payment_proof, disposition: "attachment"),  class: "btn btn-primary mt-2" %>
+            <% else %>
+              <p>No se ha subido comprobante.</p>
+            <% end %>
           </div>
         </div>
       </div>

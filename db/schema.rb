@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_05_10_190525) do
+ActiveRecord::Schema[7.0].define(version: 2024_05_16_063158) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -69,7 +69,30 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_10_190525) do
     t.datetime "updated_at", null: false
     t.integer "students_count", default: 0
     t.integer "final_student_count"
+    t.integer "workshop_id"
     t.index ["teacher_id"], name: "index_classrooms_on_teacher_id"
+    t.index ["workshop_id"], name: "index_classrooms_on_workshop_id"
+  end
+
+  create_table "lesson_completions", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "lesson_id", null: false
+    t.string "status", null: false
+    t.datetime "completion_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lesson_id"], name: "index_lesson_completions_on_lesson_id"
+    t.index ["user_id", "lesson_id"], name: "index_lesson_completions_on_user_id_and_lesson_id", unique: true
+    t.index ["user_id"], name: "index_lesson_completions_on_user_id"
+  end
+
+  create_table "lessons", force: :cascade do |t|
+    t.string "title"
+    t.text "content"
+    t.integer "workshop_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["workshop_id"], name: "index_lessons_on_workshop_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -95,8 +118,19 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_10_190525) do
     t.boolean "has_reliable_computer"
     t.text "feedback_on_previous_courses"
     t.boolean "approved", default: false
+    t.string "payment_method"
+    t.string "payment_option"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  end
+
+  create_table "workshops", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.integer "classroom_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["classroom_id"], name: "index_workshops_on_classroom_id"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
@@ -105,4 +139,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_10_190525) do
   add_foreign_key "classroom_students", "classrooms"
   add_foreign_key "classroom_students", "users"
   add_foreign_key "classrooms", "users", column: "teacher_id"
+  add_foreign_key "lesson_completions", "lessons"
+  add_foreign_key "lesson_completions", "users"
+  add_foreign_key "lessons", "workshops"
+  add_foreign_key "workshops", "classrooms"
 end
