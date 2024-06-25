@@ -19,9 +19,9 @@ class ClassroomsController < ApplicationController
 # app/controllers/classrooms_controller.rb
 def show
   @classroom = Classroom.includes(:students, :workshop).find(params[:id])
+  authorize @classroom  # Usa Pundit para autorizar
 
 end
-
 
 
   def create
@@ -41,20 +41,6 @@ end
     @classroom = Classroom.find_by(id: params[:id])
     if @classroom.nil? || @classroom.status != 'Abierto' || @classroom.students.count >= 11
       redirect_to classrooms_path, alert: 'Classroom cannot be edited due to its status or student count.'
-    end
-  end
-
-
-
-  def create
-    @classroom = Classroom.new(classroom_params)
-    if @classroom.save
-      if @classroom.students.count >= 11
-        @classroom.update(status: 'Completo')
-      end
-      redirect_to classrooms_path, notice: 'Classroom was successfully created.'
-    else
-      render :new
     end
   end
 

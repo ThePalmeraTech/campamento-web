@@ -1,7 +1,9 @@
 class WorkshopsController < ApplicationController
-  before_action :authenticate_user!
+  before_action :authenticate_user!, except: [:per_student_price]
+  skip_before_action :authenticate_user!, only: [:per_student_price]
+
   before_action :check_admin, only: [:index, :new, :create, :edit, :update, :destroy]
-  before_action :set_workshop, only: [:show, :edit, :update, :destroy]
+  before_action :set_workshop, only: [:show, :edit, :update, :destroy, :per_student_price]
 
 
 
@@ -11,15 +13,23 @@ class WorkshopsController < ApplicationController
 
   def show
     @workshop = Workshop.find(params[:id])
+    authorize @workshop
+
+    # Correctly setting @lessons after ensuring the workshop can be shown.
     @lessons = @workshop.lessons.order(:created_at)
 
-    # Asegúrate de que current_user está disponible y se inicializa @completed_lessons como un arreglo vacío si no hay lecciones completadas
+    # Initialize @completed_lessons based on current_user
     if user_signed_in?
       @completed_lessons = LessonCompletion.where(user: current_user, lesson: @lessons).pluck(:lesson_id)
     else
       @completed_lessons = []
     end
+
+  rescue Pundit::NotAuthorizedError
+    # Redirect if the user is not authorized to view this workshop
+    redirect_to root_path, alert: "You are not authorized to view this workshop."
   end
+
 
   def new
     @workshop = Workshop.new
@@ -52,6 +62,16 @@ class WorkshopsController < ApplicationController
   def destroy
     @workshop.destroy
     redirect_to workshops_url, notice: 'Workshop was successfully destroyed.'
+  end
+
+  def per_student_price
+    # Asumiendo que los workshops tienen asociados uno o más classrooms
+    classroom = @workshop.classrooms.order(created_at: :desc).first
+    if classroom
+      render json: { price: classroom.price_per_student }
+    else
+      render json: { error: "No classroom available for this workshop." }, status: :not_found
+    end
   end
 
   private

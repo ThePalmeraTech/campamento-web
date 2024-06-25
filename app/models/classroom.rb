@@ -1,6 +1,6 @@
 class Classroom < ApplicationRecord
   belongs_to :teacher, class_name: 'User', foreign_key: 'teacher_id'
-  belongs_to :workshop, optional: true  # Esto es correcto si la relación es opcional
+  belongs_to :workshop
   has_many :classroom_students
   has_many :students, through: :classroom_students, source: :user
   has_many :class_sessions, dependent: :destroy
@@ -12,15 +12,14 @@ class Classroom < ApplicationRecord
   validate :teacher_must_be_admin
   validates :status, inclusion: { in: %w[Abierto Completo Finalizado] }
 
-  validate :only_one_active_classroom, on: :create
-  validate :limit_students, on: :create
+  validate :limit_students  # Check on both create and update
 
   before_save :update_final_student_count, if: -> { status_changed? && status == 'Finalizado' }
   before_update :update_student_roles, if: -> { status_changed? && status == 'Finalizado' }
-  after_save :update_status_if_full, unless: -> { status == 'Finalizado' }
+  after_save :update_status_if_full
 
   def to_label
-    "Aula #{id}: #{status}"  # Ajusta esto según cómo deseas que se muestre
+    "Aula #{id}: #{status}"  # Customize display
   end
 
   def total_cost
@@ -29,27 +28,22 @@ class Classroom < ApplicationRecord
 
   def next_session_start_time
     next_session = class_sessions.where("session_date >= ?", Date.today).order(:session_date, :start_time).first
-    next_session&.start_datetime  # Retorna nil si no hay próxima sesión
+    next_session&.start_datetime
   end
 
   private
 
   def update_status_if_full
-    if students.count >= 11 && status != 'En clase'
-      update_column(:status, 'En clase')
-    end
-  end
-
-  def only_one_active_classroom
-    active_classroom = Classroom.where(status: ["Abierto", "En clase"]).first
-    if active_classroom && status != 'Finalizado'
-      errors.add(:base, "Ya existe un aula activa.")
+    if students.count >= 11 && status != 'Completo'
+      update_column(:status, 'Completo')
+    elsif students.count < 11 && status != 'Abierto'
+      update_column(:status, 'Abierto')
     end
   end
 
   def limit_students
-    if students.count >= 11
-      errors.add(:base, 'El aula no puede tener más de 11 estudiantes.')
+    if students.count >= 11 && status == 'Completo'
+      errors.add(:base, 'El aula está completa y no puede aceptar más estudiantes.')
     end
   end
 
@@ -59,8 +53,6 @@ class Classroom < ApplicationRecord
     end
   end
 
-
-  # Validación personalizada para asegurar que el profesor sea admin
   def teacher_must_be_admin
     errors.add(:teacher_id, "must be an admin") unless teacher&.admin?
   end
@@ -68,7 +60,4 @@ class Classroom < ApplicationRecord
   def update_final_student_count
     self.final_student_count = students.count
   end
-
-
-
 end

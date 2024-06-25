@@ -6,8 +6,12 @@ module Admin
 
     def approve
       user = User.find(params[:id])
-      user.update(approved: true)
-      redirect_to admin_dashboard_path, notice: 'User approved successfully'
+      if user.update(approved: true)  # Asumiendo que el campo se llama 'approved'
+        flash[:notice] = 'User approved successfully.'
+      else
+        flash[:alert] = 'Failed to approve user.'
+      end
+      redirect_to admin_dashboard_path  # Asegúrate de redirigir a la vista correcta
     end
 
     def destroy
@@ -19,9 +23,7 @@ module Admin
     private
 
     def ensure_admin
-      unless current_user.admin?
-        redirect_to root_path, alert: "Access denied. Only admins can perform this action."
-      end
+      redirect_to root_path, alert: 'Access denied. Only admins can perform this action.' unless current_user.admin?
     end
 
     def set_user

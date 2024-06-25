@@ -43,6 +43,11 @@ Rails.application.routes.draw do
         post 'toggle_completion'
       end
     end
+
+    member do
+      get 'per_student_price'
+    end
+
   end
 
   resources :dashboard, only: [:index], controller: 'admin/dashboard'
