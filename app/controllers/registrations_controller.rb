@@ -52,5 +52,4 @@ class RegistrationsController < Devise::RegistrationsController
   def account_update_params
     params.require(:user).permit(:full_name, :email, :password, :password_confirmation, :current_password, :phone, :workshop_id, :payment_option, :payment_method, :payment_proof, :reservation_payment_proof, :full_payment_proof)
   end
-
 end

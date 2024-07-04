@@ -1,7 +1,7 @@
 class User < ApplicationRecord
-  belongs_to :workshop, optional: true
-  # attr_accessor :payment_option
+  attr_accessor :skip_password_validation
 
+  belongs_to :workshop, optional: true
   has_many :classroom_students, dependent: :destroy
   has_many :classrooms, through: :classroom_students
   has_one_attached :full_payment_proof
@@ -13,8 +13,6 @@ class User < ApplicationRecord
 
   has_many :lesson_completions, dependent: :destroy
 
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
@@ -22,18 +20,10 @@ class User < ApplicationRecord
 
   validates :full_name, presence: true
   validates :email, presence: true, uniqueness: true
-  validates :password, presence: true, length: { minimum: 7 }
-  validates :password_confirmation, presence: true
+  validates :password, presence: true, length: { minimum: 7 }, unless: -> { skip_password_validation }
+  validates :password_confirmation, presence: true, unless: -> { skip_password_validation }
   validates :phone, presence: true
   validates :workshop_id, presence: true
-  validate :at_least_one_payment_proof
-
-  has_one_attached :payment_proof
-  has_one_attached :reservation_payment_proof
-  has_one_attached :full_payment_proof
-
-
-
 
   def admin?
     role == 'admin'
@@ -50,7 +40,7 @@ class User < ApplicationRecord
   private
 
   def at_least_one_payment_proof
-    unless payment_proof.attached? || reservation_payment_proof.attached? || full_payment_proof.attached?
+    unless full_payment_proof.attached? || reservation_payment_proof.attached?
       errors.add(:base, "Debe subir al menos un comprobante de pago: completo o de reserva.")
     end
   end
@@ -69,5 +59,4 @@ class User < ApplicationRecord
     errors.add(:full_payment_proof, 'must be a JPEG, PNG, or PDF file.') if full_payment_proof.attached? && !full_payment_proof.content_type.in?(%w(image/jpeg image/png application/pdf))
     errors.add(:reservation_payment_proof, 'must be a JPEG, PNG, or PDF file.') if reservation_payment_proof.attached? && !reservation_payment_proof.content_type.in?(%w(image/jpeg image/png application/pdf))
   end
-
 end
