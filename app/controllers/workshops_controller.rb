@@ -65,14 +65,17 @@ class WorkshopsController < ApplicationController
   end
 
   def per_student_price
-    # Asumiendo que los workshops tienen asociados uno o más classrooms
-    classroom = @workshop.classrooms.order(created_at: :desc).first
+    workshop = Workshop.find(params[:id])
+    classroom = workshop.classrooms.order(created_at: :desc).first
     if classroom
-      render json: { price: classroom.price_per_student }
+      render json: { price: classroom.price_per_student, regular_price: classroom.regular_price, discount_percentage: classroom.discount_percentage }
     else
-      render json: { error: "No classroom available for this workshop." }, status: :not_found
+      render json: { error: "No classroom found for workshop." }, status: :not_found
     end
   end
+
+
+
 
   private
 
