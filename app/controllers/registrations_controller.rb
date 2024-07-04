@@ -6,11 +6,15 @@ class RegistrationsController < Devise::RegistrationsController
     @workshops = Workshop.all
     if params[:user] && params[:user][:workshop_id].present?
       workshop_id = params[:user][:workshop_id]
-      logger.info "Workshop ID received: #{workshop_id}"
       classroom = Classroom.where(workshop_id: workshop_id).order(created_at: :desc).first
       if classroom
         @price_per_student = classroom.price_per_student
+        @regular_price = classroom.regular_price
+        @discount_percentage = classroom.discount_percentage
         logger.info "Price per student set to #{@price_per_student}"
+        logger.info "Regular price set to #{@regular_price}"
+        logger.info "Discount percentage loaded: #{@discount_percentage}%"
+
       else
         logger.info "No classroom found for workshop_id #{workshop_id}"
       end
@@ -18,6 +22,7 @@ class RegistrationsController < Devise::RegistrationsController
       logger.info "No workshop_id found in params"
     end
   end
+
 
   def create
     super do |user|
