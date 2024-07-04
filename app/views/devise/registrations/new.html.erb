@@ -14,111 +14,60 @@
           </div>
         <% end %>
 
-        <p>Price per student: <%= @price_per_student.inspect %></p>
-
-
         <!-- Paso 1: Información Personal -->
         <div class="step step-active bg-white" data-payment-target="step">
-          <div class="container mt-5">
-            <div class="row">
-              <div class="col-md-12 offset-md-0">
-                <div style="width: 175px; border-radius: 175px; height: 175px; background-position-x: 47%; background-position-y: 50%; background-size: 180%; background-image: url('/images/logo/Campamentoweb1.webp'); margin: 0 auto;"></div>
-                <br>
-                <h1>Únete a nosotros los días <strong>9, 10 y 12 de junio</strong> a las <em>7 PM</em></h1>
-                <p class="fs-3">El único campamento donde te garantizamos que la única picadura que recibirás será la del 'bug' en el código.</p>
-                <hr class="mt-5 mb-5" style="border:3px dashed #fff">
-                <h2 class="mb-5">¿Por qué participar?</h2>
-                <ul class="fs-5">
-                  <li><strong>Domina las tecnologías fundamentales de la web:</strong> Aprenderás HTML y CSS desde cero, adquiriendo habilidades cruciales que forman la base de cualquier desarrollo web moderno.</li>
-                  <li><strong>Exploración del arte digital:</strong> Despierta tu creatividad combinando arte y tecnología. Aprenderás cómo el HTML y CSS pueden ser utilizados para crear impresionantes diseños web y expresiones artísticas visuales, ofreciéndote una nueva forma de manifestar tu arte en el mundo digital.</li>
-                  <li><strong>Incrementa tu empleabilidad:</strong> Dominar el front-end te abre puertas en numerosas industrias, ya que todas las empresas necesitan una presencia online efectiva y atractiva.</li>
-                  <li><strong>Capacidad de colaboración interdisciplinaria:</strong> Obtén las habilidades para trabajar efectivamente con equipos de diseño y desarrollo, mejorando la comunicación y la eficiencia del proyecto.</li>
-                  <li><strong>Acceso continuo a recursos:</strong> Mantendrás acceso a los recursos del taller incluso después de su conclusión, permitiéndote continuar aprendiendo y practicando a tu propio ritmo.</li>
-                  <li><strong>Parte de una red profesional:</strong> Serás incluido en una lista de codificadores, un detalle que podrás añadir a tu currículum para aumentar tu atractivo profesional frente a posibles empleadores.</li>
-                  <li><strong>Integración en la comunidad de Coders:</strong> Te unirás a nuestra comunidad de nuevos programadores y recibirás invitaciones a jornadas de programación en grupo, lo que te permitirá fortalecer tus habilidades y hacer networking efectivo.</li>
-                </ul>
-                <h1 class="text-center mt-5 mb-5">¡Aparta tu cupo ahora a un 40% de descuento!</h1>
-              </div>
-            </div>
-          </div>
-
           <fieldset class="mb-3">
             <legend>Información Personal</legend>
-            <%= f.input :full_name, label: 'Nombre completo', required: true, autofocus: true, input_html: { class: 'form-control' } %>
-            <%= f.input :email, required: true, input_html: { class: 'form-control' } %>
-            <%= f.input :password, required: true, input_html: { class: 'form-control' }, autocomplete: "new-password" %>
-            <%= f.input :password_confirmation, required: true, input_html: { class: 'form-control' }, autocomplete: "new-password" %>
-            <%= f.input :phone, input_html: { class: 'form-control' } %>
-            <%= f.collection_select :workshop_id, Workshop.all, :id, :name, {prompt: 'Selecciona tu taller'}, {id: 'workshop_selector', class: 'form-control'} %>
-
+            <%= f.input :full_name, label: 'Nombre completo', required: true, autofocus: true, input_html: { class: 'form-control required-field', 'data-payment-target': 'requiredField', 'data-action': 'input->payment#validateStep' } %>
+            <%= f.input :email, required: true, input_html: { class: 'form-control required-field', 'data-payment-target': 'emailField', 'data-action': 'input->payment#validateStep input->payment#validateEmail' } %>
+            <div data-payment-target="emailError" class="text-danger"></div>
+            <%= f.input :password, required: true, input_html: { class: 'form-control required-field', 'data-payment-target': 'passwordField', 'data-action': 'input->payment#validateStep input->payment#validatePassword' }, autocomplete: "new-password" %>
+            <div data-payment-target="passwordRequirements" class="mt-2">
+              <p class="text-danger" data-payment-target="passwordLength">Al menos 7 caracteres</p>
+              <p class="text-danger" data-payment-target="passwordUppercase">Al menos 1 letra mayúscula</p>
+              <p class="text-danger" data-payment-target="passwordSpecial">Al menos 1 caracter especial</p>
+              <p class="text-danger" data-payment-target="passwordNumber">Al menos 1 número</p>
+            </div>
+            <%= f.input :password_confirmation, required: true, input_html: { class: 'form-control required-field', 'data-payment-target': 'passwordConfirmationField', 'data-action': 'input->payment#validateStep input->payment#validatePasswordConfirmation' }, autocomplete: "new-password" %>
+            <div data-payment-target="passwordError" class="text-danger"></div>
+            <%= f.input :phone, input_html: { class: 'form-control', 'data-payment-target': 'requiredField', 'data-action': 'input->payment#validateStep' } %>
+            <%= f.collection_select :workshop_id, Workshop.all, :id, :name, {prompt: 'Selecciona tu taller'}, {id: 'workshop_selector', class: 'form-control required-field', 'data-payment-target': 'requiredField', 'data-action': 'input->payment#validateStep' } %>
           </fieldset>
-          <button type="button" class="btn btn-primary" data-action="click->payment#nextStep">Siguiente</button>
+          <button type="button" class="btn btn-primary" data-action="click->payment#nextStep" data-payment-target="nextButton" disabled>Siguiente</button>
         </div>
 
-        <!-- Paso 2: Selección de Método de Pago y Subir Comprobante -->
+        <!-- Paso 2: Selección de Método de Pago -->
         <div class="step mt-5 pt-5" data-payment-target="step" data-aos="fade-up">
           <fieldset class="mb-3">
-            <legend>Método de pago y comprobante:</legend>
-            <%= f.input :payment_option, as: :select, collection: [['Pago Completo', 'full'], ['Pago de Reserva', 'reservation']], prompt: "Seleccione tipo de pago", input_html: { class: 'form-select', data: { action: "change->payment#showPaymentProof", payment_target: "paymentOption" } } %>
+            <legend>Método de pago:</legend>
+            <%= f.input :payment_option, as: :select, collection: [['Pago Completo', 'full'], ['Pago de Reserva', 'reservation']], prompt: "Seleccione tipo de pago", input_html: { class: 'form-select required-field', 'data-payment-target': 'paymentOption', 'data-action': 'change->payment#validateStep change->payment#showPaymentProof' } %>
+            <%= f.input :payment_method, as: :select, collection: [["Yappy", "yappy"], ["ACH", "ach"]], prompt: "Seleccione un método de pago", input_html: { class: 'form-select required-field', 'data-payment-target': 'paymentMethod', 'data-action': 'change->payment#validateStep change->payment#showPaymentInfo' } %>
+          </fieldset>
+          <button type="button" class="btn btn-secondary" data-action="click->payment#previousStep">Anterior</button>
+          <button type="button" class="btn btn-primary" data-action="click->payment#nextStep" data-payment-target="nextButton" disabled>Siguiente</button>
+        </div>
 
-            <!-- Información para Yappy, oculta inicialmente -->
-            <div data-payment-target="yappyInfo" class="d-none" data-aos="fade-up">
-              <div class="yappy p-5 rounded">
-                <div class="row">
-                  <div class="col-md-4 text-center">
-                    <img src="/images/payments/yappy-campamento-web.png" alt="Pagar con Yappy" class="img-fluid" width="90">
-                  </div>
-                  <div class="col-md-4 text-center">
-                    <img src="/images/payments/qr.jpeg" alt="Pagar a QR" class="img-fluid" width="150">
-                  </div>
-                  <div class="col-md-4 text-center">
-                    <div class="codigo-container">
-                      <h3 id="codigo" class="mt-5">6250-8252</h3>
-                      <button id="copyButton" class="btn btn-outline-secondary" type="button">
-                        <i class="fa fa-copy"></i>
-                      </button>
-                      <div id="mensaje-copiado" style="display: none;">
-                        <i class="fa fa-check"></i> Texto copiado
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+        <!-- Paso 3: Subir Comprobante -->
+        <div class="step mt-5 pt-5" data-payment-target="step" data-aos="fade-up">
+          <fieldset class="mb-3">
+            <legend>Subir Comprobante:</legend>
+            <div class="pricing-info shadow-lg p-4 my-4 mt-5 bg-white rounded" data-payment-target="fullPaymentDetails">
+              <h4 class="text-center">Detalle de Precio</h4>
+              <hr>
+              <p class="text-muted text-center">Precio Regular: <span id="regular_price_display">Selecciona un taller</span></p>
+              <p class="text-center discount-text">Descuento Aplicado: <span id="discount_percentage_display">0%</span></p>
+              <h4 class="text-center total-price">Total a Pagar: <span id="total_price_display">0 USD</span></h4>
             </div>
-
-            <!-- Información para ACH, oculta inicialmente -->
-            <div data-payment-target="achInfo" class="d-none" data-aos="fade-up">
-              <div class="ach p-5 rounded">
-                <div class="row">
-                  <div class="col-md-5 text-center">
-                    <img src="/images/payments/ach-campamento-web.png" alt="Pagar con Transferencia Bancaria" class="img-fluid" width="200">
-                  </div>
-                  <div class="col-md-7 info text-center">
-                    <h5 class="fs-3">Transferencia Bancaria</h5>
-                    <p>Número de cuenta: 0401985663310</p>
-                    <p>Nombre de la cuenta: Hanaley Mosley</p>
-                    <p>Cuenta de ahorros</p>
-                  </div>
-                </div>
-              </div>
+            <div class="pricing-info shadow-lg p-4 my-4 mt-5 bg-white rounded d-none" data-payment-target="reservationPaymentDetails">
+              <h4 class="text-center">Detalle de Reserva</h4>
+              <hr>
+              <p class="text-muted text-center">Precio Original: <span id="regular_price_display_reservation">Selecciona un taller</span></p>
+              <p class="text-center discount-text">Descuento Aplicado: <span id="discount_percentage_display_reservation">0%</span></p>
+              <p class="text-center">Importe de la Reserva: <span class="text-primary">0 USD</span></p>
+              <p class="text-center">Total a Pagar: <span class="text-primary">0 USD</span></p>
+              <p class="text-center">Pago Pendiente: <span class="text-primary">0 USD</span></p>
             </div>
-
-            <!-- Opciones de Comprobante de Pago, ocultas inicialmente -->
-            <div data-payment-target="fullPaymentProof" class="d-none">
-              <div class="pricing-info shadow-lg p-4 my-4 mt-5 bg-white rounded">
-                <h4 class="text-center">Detalle de Precio</h4>
-                <hr>
-                <p class="text-muted text-center">Precio Regular: <span id="price_display">Selecciona un taller</span></p>
-
-
-                <p class="text-center discount-text">Descuento Aplicado: <span class="text-success">40%</span></p>
-                <h4 class="text-center total-price">Total a Pagar: <span class="text-primary">$60 USD</span></h4>
-
-                <!-- Contenedor del método de pago para pago completo, asegúrate de cambiar el ID -->
-                <div id="fullPaymentMethodContainer" class="d-none" data-payment-target="paymentMethodContainer">
-                  <%= f.input :payment_method, as: :select, collection: [["Yappy", "yappy"], ["ACH", "ach"]], prompt: "Seleccione un método de pago", input_html: { class: 'form-select', data: { action: "change->payment#showPaymentInfo", payment_target: "fullPaymentMethod" } } %>
-                </div>
-              </div>
+            <div class="d-none" data-payment-target="fullPaymentProof">
               <label class="btn btn-primary">
                 Subir comprobante de pago completo
                 <%= f.file_field :full_payment_proof, direct_upload: true, class: 'd-none', data: { action: "change->payment#uploadFile", payment_target: "fileInput" }, accept: 'image/jpeg,image/png,application/pdf' %>
@@ -128,22 +77,7 @@
                 <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
             </div>
-
-            <div data-payment-target="reservationPaymentProof" class="d-none">
-              <div class="pricing-info shadow-lg p-4 my-4 mt-5 bg-white rounded">
-                <h4 class="text-center">Detalle de Reserva</h4>
-                <hr>
-                <p class="text-muted text-center">Precio Original: <span class="original-price">$100.00 USD</span></p>
-                <p class="text-center discount-text">Descuento Aplicado: <span class="text-success">40%</span></p>
-                <p class="text-center">Importe de la Reserva: <span class="text-primary">$30 USD</span></p>
-                <p class="text-center">Total a Pagar: <span class="text-primary">$60 USD</span></p>
-                <p class="text-center">Pago Pendiente: <span class="text-primary">$30 USD</span></p>
-
-                <!-- Contenedor del método de pago para pago de reserva, asegúrate de cambiar el ID -->
-                <div id="reservationPaymentMethodContainer" class="d-none" data-payment-target="paymentMethodContainer">
-                  <%= f.input :payment_method, as: :select, collection: [["Yappy", "yappy"], ["ACH", "ach"]], prompt: "Seleccione un método de pago", input_html: { class: 'form-select', data: { action: "change->payment#showPaymentInfo", payment_target: "reservationPaymentMethod" } } %>
-                </div>
-              </div>
+            <div class="d-none" data-payment-target="reservationPaymentProof">
               <label class="btn btn-primary">
                 Subir comprobante de pago de reserva
                 <%= f.file_field :reservation_payment_proof, direct_upload: true, class: 'd-none', data: { action: "change->payment#uploadFile", payment_target: "fileInput" }, accept: 'image/jpeg,image/png,application/pdf' %>
@@ -154,7 +88,50 @@
               </div>
             </div>
           </fieldset>
-          <%= f.button :submit, "Sign up", class: 'btn btn-primary mt-3' %>
+          <button type="button" class="btn btn-secondary" data-action="click->payment#previousStep">Anterior</button>
+          <%= f.button :submit, "Finalizar", class: 'btn btn-primary mt-3', data: { payment_target: "nextButton" }, disabled: true %>
+        </div>
+
+        <!-- Información para Yappy -->
+        <div data-payment-target="yappyInfo" class="d-none" data-aos="fade-up">
+          <div class="yappy p-5 rounded">
+            <div class="row">
+              <div class="col-md-4 text-center">
+                <img src="/images/payments/yappy-campamento-web.png" alt="Pagar con Yappy" class="img-fluid" width="90">
+              </div>
+              <div class="col-md-4 text-center">
+                <img src="/images/payments/qr.jpeg" alt="Pagar a QR" class="img-fluid" width="150">
+              </div>
+              <div class="col-md-4 text-center">
+                <div class="codigo-container">
+                  <h3 id="codigo" class="mt-5">6250-8252</h3>
+                  <button id="copyButton" class="btn btn-outline-secondary" type="button">
+                    <i class="fa fa-copy"></i>
+                  </button>
+                  <div id="mensaje-copiado" style="display: none;">
+                    <i class="fa fa-check"></i> Texto copiado
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Información para ACH -->
+        <div data-payment-target="achInfo" class="d-none" data-aos="fade-up">
+          <div class="ach p-5 rounded">
+            <div class="row">
+              <div class="col-md-5 text-center">
+                <img src="/images/payments/ach-campamento-web.png" alt="Pagar con Transferencia Bancaria" class="img-fluid" width="200">
+              </div>
+              <div class="col-md-7 info text-center">
+                <h5 class="fs-3">Transferencia Bancaria</h5>
+                <p>Número de cuenta: 0401985663310</p>
+                <p>Nombre de la cuenta: Hanaley Mosley</p>
+                <p>Cuenta de ahorros</p>
+              </div>
+            </div>
+          </div>
         </div>
       <% end %>
       <%= render "devise/shared/links" %>
@@ -162,46 +139,89 @@
   </div>
 </div>
 
+<!-- Scripts para la validación -->
 <script>
-document.addEventListener('turbo:load', function() {
-  const workshopSelector = document.getElementById('workshop_selector');
-  const priceDisplay = document.getElementById('price_display');
+  document.addEventListener('turbo:load', function() {
+    const workshopSelector = document.getElementById('workshop_selector');
+    const priceDisplay = document.querySelector('[data-payment-target="priceDisplay"]');
+    const regularPriceDisplay = document.getElementById('regular_price_display');
+    const discountPercentageDisplay = document.getElementById('discount_percentage_display');
+    const totalPriceDisplay = document.getElementById('total_price_display');
+    const regularPriceDisplayReservation = document.getElementById('regular_price_display_reservation');
+    const discountPercentageDisplayReservation = document.getElementById('discount_percentage_display_reservation');
+    const totalPriceDisplayReservation = document.querySelector('.text-primary');
 
-  workshopSelector.addEventListener('change', function() {
-    const workshopId = this.value;
-    if (!workshopId) {
-      priceDisplay.textContent = 'Selecciona un taller';
-      return;
-    }
+    workshopSelector.addEventListener('change', function() {
+      const workshopId = this.value;
+      if (!workshopId) {
+        regularPriceDisplay.textContent = 'Selecciona un taller';
+        discountPercentageDisplay.textContent = '0%';
+        totalPriceDisplay.textContent = '0 USD';
+        regularPriceDisplayReservation.textContent = 'Selecciona un taller';
+        discountPercentageDisplayReservation.textContent = '0%';
+        totalPriceDisplayReservation.textContent = '0 USD';
+        return;
+      }
 
-    fetch(`/workshops/${workshopId}/per_student_price`)
-      .then(response => response.json())
-      .then(data => {
-        // Convert the price from string to float and format it
-        const price = parseFloat(data.price);
-        priceDisplay.textContent = price.toFixed(2) + ' USD';
-      })
-      .catch(error => {
-        console.error("Error fetching price:", error);
-        priceDisplay.textContent = 'Error al obtener el precio';
-      });
-  });
-});
-</script>
+      fetch(`/workshops/${workshopId}/per_student_price`)
+        .then(response => response.json())
+        .then(data => {
+          const price = parseFloat(data.price);
+          const regularPrice = parseFloat(data.regular_price || price);
+          const discountPercentage = parseFloat(data.discount_percentage || 0);
+          const totalPrice = price;
 
-<script>
-document.addEventListener('turbo:load', function() {
-  document.getElementById('copyButton').addEventListener('click', function() {
-    var codigo = document.getElementById('codigo').innerText;
-    navigator.clipboard.writeText(codigo).then(function() {
-      var mensajeCopiado = document.getElementById('mensaje-copiado');
-      mensajeCopiado.style.display = 'block';
-      setTimeout(function() {
-        mensajeCopiado.style.opacity = '1';
-      }, 10); // Retardo pequeño para permitir que se aplique la transición correctamente
-    }).catch(function() {
-      console.error('Error al copiar el texto');
+          regularPriceDisplay.textContent = regularPrice.toFixed(2) + ' USD';
+          discountPercentageDisplay.textContent = discountPercentage.toFixed(2) + '%';
+          totalPriceDisplay.textContent = totalPrice.toFixed(2) + ' USD';
+
+          regularPriceDisplayReservation.textContent = regularPrice.toFixed(2) + ' USD';
+          discountPercentageDisplayReservation.textContent = discountPercentage.toFixed(2) + '%';
+          totalPriceDisplayReservation[0].textContent = (totalPrice / 2).toFixed(2) + ' USD';
+          totalPriceDisplayReservation[1].textContent = (totalPrice / 2).toFixed(2) + ' USD';
+        })
+        .catch(error => console.error("Error fetching price:", error));
+    });
+
+    const paymentMethodSelector = document.querySelector('[data-payment-target="paymentMethod"]');
+    const yappyInfo = document.querySelector('[data-payment-target="yappyInfo"]');
+    const achInfo = document.querySelector('[data-payment-target="achInfo"]');
+    const fullPaymentProof = document.querySelector('[data-payment-target="fullPaymentProof"]');
+    const reservationPaymentProof = document.querySelector('[data-payment-target="reservationPaymentProof"]');
+    const paymentOptionSelector = document.querySelector('[data-payment-target="paymentOption"]');
+    const fullPaymentDetails = document.querySelector('[data-payment-target="fullPaymentDetails"]');
+    const reservationPaymentDetails = document.querySelector('[data-payment-target="reservationPaymentDetails"]');
+
+    paymentMethodSelector.addEventListener('change', function() {
+      if (this.value === 'yappy') {
+        yappyInfo.classList.remove('d-none');
+        achInfo.classList.add('d-none');
+      } else if (this.value === 'ach') {
+        yappyInfo.classList.add('d-none');
+        achInfo.classList.remove('d-none');
+      } else {
+        yappyInfo.classList.add('d-none');
+        achInfo.classList.add('d-none');
+      }
+    });
+
+    paymentOptionSelector.addEventListener('change', function() {
+      if (this.value === 'full') {
+        fullPaymentProof.classList.remove('d-none');
+        reservationPaymentProof.classList.add('d-none');
+        fullPaymentDetails.classList.remove('d-none');
+        reservationPaymentDetails.classList.add('d-none');
+      } else if (this.value === 'reservation') {
+        fullPaymentProof.classList.add('d-none');
+        reservationPaymentProof.classList.remove('d-none');
+        fullPaymentDetails.classList.add('d-none');
+        reservationPaymentDetails.classList.remove('d-none');
+      } else {
+        fullPaymentProof.classList.add('d-none');
+        reservationPaymentProof.classList.add('d-none');
+        fullPaymentDetails.classList.add('d-none');
+        reservationPaymentDetails.classList.add('d-none');
+      }
     });
   });
-});
 </script>

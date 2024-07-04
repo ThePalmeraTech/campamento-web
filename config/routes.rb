@@ -6,7 +6,7 @@ Rails.application.routes.draw do
     registrations: 'registrations'
   }
 
-  # Redirección condicional basada en la autenticación del usuario
+
   authenticated :user do
     root to: 'home#index', as: :authenticated_root
   end
@@ -15,7 +15,6 @@ Rails.application.routes.draw do
     root to: redirect('/users/sign_in'), as: :unauthenticated_root
   end
 
-  # Ruta de perfil personalizada
   get 'profile', to: 'users#profile', as: 'user_profile'
 
   resources :users, only: [:destroy, :show] do
@@ -26,11 +25,9 @@ Rails.application.routes.draw do
 
   namespace :admin do
     get 'dashboard', to: 'dashboard#index'
-
     resources :classrooms, only: [:show, :edit, :update, :destroy]
     patch 'users/:id/approve', to: 'users#approve', as: 'approve_user'
-
-    resources :coders, only: [:index]  # Asegurando que index responda a JS
+    resources :coders, only: [:index]
   end
 
   get 'waiting_approval', to: 'static_pages#waiting_approval'
@@ -47,7 +44,6 @@ Rails.application.routes.draw do
     member do
       get 'per_student_price'
     end
-
   end
 
   resources :dashboard, only: [:index], controller: 'admin/dashboard'

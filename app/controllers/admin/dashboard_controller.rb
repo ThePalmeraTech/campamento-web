@@ -4,7 +4,6 @@ class Admin::DashboardController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:index], if: :js_request?
   before_action :check_user_approved, except: :approve
 
-
   def index
     page = params[:page].to_i
     per_page = 10
@@ -12,16 +11,12 @@ class Admin::DashboardController < ApplicationController
 
     @coders = User.where(role: 'Coder').limit(per_page).offset(offset)
     @total_pages = (User.where(role: 'Coder').count.to_f / per_page).ceil
-    @students = User.where(role: 'estudiante')
-    @waiting_users = User.where(approved: false).limit(per_page).offset(offset)# Agregar esta línea
-    @total_waiting_pages = (User.where(role: 'waiting').count.to_f / per_page).ceil # Si necesitas paginación
+    # Filtra para obtener solo los estudiantes que han sido aprobados
+    @students = User.where(role: 'estudiante', approved: true)
 
-    respond_to do |format|
-      format.html
-      format.js
-    end
+    @waiting_users = User.where(approved: false)
+    @total_waiting_pages = (User.where(approved: false).count.to_f / per_page).ceil
 
-    # Códigos existentes para otros modelos
     @total_classroom_pages = (Classroom.count.to_f / per_page).ceil
     @classrooms = Classroom.where(status: 'Abierto').offset(page * per_page).limit(per_page)
 
@@ -30,7 +25,6 @@ class Admin::DashboardController < ApplicationController
       format.js
     end
   end
-
 
   private
 
@@ -45,8 +39,6 @@ class Admin::DashboardController < ApplicationController
   def check_user_approved
     unless current_user.approved? || current_user.admin?
       redirect_to waiting_approval_path, alert: "You must be approved to access this page."
-      return
     end
   end
-
 end

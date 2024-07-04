@@ -66,6 +66,13 @@ gem "bootsnap", require: false
 # Use Sass to process CSS
 gem "sassc-rails"
 
+
+# Mail
+group :development, :test do
+  gem 'dotenv-rails'  # Para manejar variables de entorno
+  gem 'letter_opener' # Para visualizar correos en el navegador
+end
+
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 

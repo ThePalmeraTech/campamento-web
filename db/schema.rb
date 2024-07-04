@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_06_11_002155) do
+ActiveRecord::Schema[7.0].define(version: 2024_06_25_073310) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -70,6 +70,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_06_11_002155) do
     t.integer "students_count", default: 0
     t.integer "final_student_count"
     t.integer "workshop_id"
+    t.decimal "regular_price", precision: 8, scale: 2
+    t.decimal "discount_percentage", precision: 5, scale: 2
     t.index ["teacher_id"], name: "index_classrooms_on_teacher_id"
     t.index ["workshop_id"], name: "index_classrooms_on_workshop_id"
   end

@@ -1,6 +1,6 @@
 class User < ApplicationRecord
   belongs_to :workshop, optional: true
-  attr_accessor :payment_option
+  # attr_accessor :payment_option
 
   has_many :classroom_students, dependent: :destroy
   has_many :classrooms, through: :classroom_students
@@ -20,6 +20,21 @@ class User < ApplicationRecord
 
   after_create :set_default_approved
 
+  validates :full_name, presence: true
+  validates :email, presence: true, uniqueness: true
+  validates :password, presence: true, length: { minimum: 7 }
+  validates :password_confirmation, presence: true
+  validates :phone, presence: true
+  validates :workshop_id, presence: true
+  validate :at_least_one_payment_proof
+
+  has_one_attached :payment_proof
+  has_one_attached :reservation_payment_proof
+  has_one_attached :full_payment_proof
+
+
+
+
   def admin?
     role == 'admin'
   end
@@ -35,7 +50,7 @@ class User < ApplicationRecord
   private
 
   def at_least_one_payment_proof
-    if full_payment_proof.blank? && reservation_payment_proof.blank?
+    unless payment_proof.attached? || reservation_payment_proof.attached? || full_payment_proof.attached?
       errors.add(:base, "Debe subir al menos un comprobante de pago: completo o de reserva.")
     end
   end
@@ -54,4 +69,5 @@ class User < ApplicationRecord
     errors.add(:full_payment_proof, 'must be a JPEG, PNG, or PDF file.') if full_payment_proof.attached? && !full_payment_proof.content_type.in?(%w(image/jpeg image/png application/pdf))
     errors.add(:reservation_payment_proof, 'must be a JPEG, PNG, or PDF file.') if reservation_payment_proof.attached? && !reservation_payment_proof.content_type.in?(%w(image/jpeg image/png application/pdf))
   end
+
 end

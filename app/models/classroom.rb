@@ -9,14 +9,14 @@ class Classroom < ApplicationRecord
 
   validates :teacher, presence: true
   validates :workshop_id, presence: true, unless: -> { workshop.blank? }
-  validate :teacher_must_be_admin
+  validates :regular_price, numericality: { greater_than_or_equal_to: 0 }, presence: true
+  validates :discount_percentage, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }, presence: true
+  validates :price_per_student, numericality: { greater_than: 0 }
   validates :status, inclusion: { in: %w[Abierto Completo Finalizado] }
+  validate :valid_status_transition, if: :status_changed?
+  before_save :calculate_total_price
+  after_save :update_student_roles, if: -> { saved_change_to_status? && status == 'Finalizado' }
 
-  validate :limit_students  # Check on both create and update
-
-  before_save :update_final_student_count, if: -> { status_changed? && status == 'Finalizado' }
-  before_update :update_student_roles, if: -> { status_changed? && status == 'Finalizado' }
-  after_save :update_status_if_full
 
   def to_label
     "Aula #{id}: #{status}"  # Customize display
@@ -33,23 +33,13 @@ class Classroom < ApplicationRecord
 
   private
 
-  def update_status_if_full
-    if students.count >= 11 && status != 'Completo'
-      update_column(:status, 'Completo')
-    elsif students.count < 11 && status != 'Abierto'
-      update_column(:status, 'Abierto')
-    end
-  end
-
-  def limit_students
-    if students.count >= 11 && status == 'Completo'
-      errors.add(:base, 'El aula está completa y no puede aceptar más estudiantes.')
-    end
-  end
-
-  def update_student_roles
-    students.each do |student|
-      student.update(role: 'Coder')
+  def calculate_total_price
+    if regular_price.present?
+      if discount_percentage.present? && discount_percentage > 0
+        self.price_per_student = regular_price - (regular_price * (discount_percentage / 100.0))
+      else
+        self.price_per_student = regular_price
+      end
     end
   end
 
@@ -57,7 +47,19 @@ class Classroom < ApplicationRecord
     errors.add(:teacher_id, "must be an admin") unless teacher&.admin?
   end
 
-  def update_final_student_count
-    self.final_student_count = students.count
+
+
+  def valid_status_transition
+    if status == 'Finalizado' && !%w[Abierto Completo].include?(status_was)
+      errors.add(:status, "can only be set to 'Finalizado' if it was previously 'Abierto' or 'Completo'")
+    end
   end
+
+
+  def update_student_roles
+    students.each do |student|
+      student.update(role: 'Coders') unless student.role == 'Coders'
+    end
+  end
+
 end
