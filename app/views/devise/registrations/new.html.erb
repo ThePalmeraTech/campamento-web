@@ -222,4 +222,20 @@ const paymentMethodSelector = document.querySelector('[data-payment-target="paym
     }
   });
 });
+
+
+document.addEventListener('turbo:load', function() {
+  document.getElementById('copyButton').addEventListener('click', function() {
+    var codigo = document.getElementById('codigo').innerText;
+    navigator.clipboard.writeText(codigo).then(function() {
+      var mensajeCopiado = document.getElementById('mensaje-copiado');
+      mensajeCopiado.style.display = 'block';
+      setTimeout(function() {
+        mensajeCopiado.style.opacity = '1';
+      }, 10); // Retardo pequeño para permitir que se aplique la transición correctamente
+    }).catch(function() {
+      console.error('Error al copiar el texto');
+    });
+  });
+});
 </script>
