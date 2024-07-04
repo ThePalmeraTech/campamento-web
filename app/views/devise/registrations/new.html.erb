@@ -50,14 +50,56 @@
         <!-- Paso 3: Subir Comprobante -->
         <div class="step mt-5 pt-5" data-payment-target="step" data-aos="fade-up">
           <fieldset class="mb-3">
-            <legend>Subir Comprobante:</legend>
-           <div class="pricing-info shadow-lg p-4 my-4 mt-5 bg-white rounded" data-payment-target="fullPaymentDetails">
+            <legend>Pagar y Subir Comprobante:</legend>
+
+            <!-- Contenedor de Información para Yappy, ahora movido arriba -->
+            <div data-payment-target="yappyInfo" class="d-none" data-aos="fade-up">
+              <div class="yappy p-5 rounded">
+                <div class="row">
+                  <div class="col-md-4 text-center">
+                    <img src="/images/payments/yappy-campamento-web.png" alt="Pagar con Yappy" class="img-fluid" width="90">
+                  </div>
+                  <div class="col-md-4 text-center">
+                    <img src="/images/payments/qr.jpeg" alt="Pagar a QR" class="img-fluid" width="150">
+                  </div>
+                  <div class="col-md-4 text-center">
+                    <div class="codigo-container">
+                      <h3 id="codigo" class="mt-5">6250-8252</h3>
+                      <button id="copyButton" class="btn btn-outline-secondary" type="button">
+                        <i class="fa fa-copy"></i>
+                      </button>
+                      <div id="mensaje-copiado" style="display: none;">
+                        <i class="fa fa-check"></i> Texto copiado
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Contenedor de Información para ACH, ahora movido arriba -->
+            <div data-payment-target="achInfo" class="d-none" data-aos="fade-up">
+              <div class="ach p-5 rounded">
+                <div class="row">
+                  <div class="col-md-5 text-center">
+                    <img src="/images/payments/ach-campamento-web.png" alt="Pagar con Transferencia Bancaria" class="img-fluid" width="200">
+                  </div>
+                  <div class="col-md-7 info text-center">
+                    <h5 class="fs-3">Transferencia Bancaria</h5>
+                    <p>Número de cuenta: 0401985663310</p>
+                    <p>Nombre de la cuenta: Hanaley Mosley</p>
+                    <p>Cuenta de ahorros</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Detalles del Pago -->
+            <div class="pricing-info shadow-lg p-4 my-4 mt-5 bg-white rounded" data-payment-target="fullPaymentDetails">
               <h4 class="text-center">Detalle de Precio</h4>
               <hr>
               <p class="text-muted text-center">Precio Regular: <span id="regular_price_display">Selecciona un taller</span></p>
               <p class="text-center discount-text">Descuento Aplicado: <span id="discount_percentage_display"><%= @discount_percentage || 0 %>%</span></p>
-<% logger.info "Displaying discount: #{@discount_percentage}" %>
-
               <h4 class="text-center total-price">Total a Pagar: <span id="total_price_display">0 USD</span></h4>
             </div>
             <div class="pricing-info shadow-lg p-4 my-4 mt-5 bg-white rounded d-none" data-payment-target="reservationPaymentDetails">
@@ -94,48 +136,6 @@
           <button type="button" class="btn btn-secondary" data-action="click->payment#previousStep">Anterior</button>
           <%= f.button :submit, "Finalizar", class: 'btn btn-primary mt-3', data: { payment_target: "nextButton" }, disabled: true %>
         </div>
-
-        <!-- Información para Yappy -->
-        <div data-payment-target="yappyInfo" class="d-none" data-aos="fade-up">
-          <div class="yappy p-5 rounded">
-            <div class="row">
-              <div class="col-md-4 text-center">
-                <img src="/images/payments/yappy-campamento-web.png" alt="Pagar con Yappy" class="img-fluid" width="90">
-              </div>
-              <div class="col-md-4 text-center">
-                <img src="/images/payments/qr.jpeg" alt="Pagar a QR" class="img-fluid" width="150">
-              </div>
-              <div class="col-md-4 text-center">
-                <div class="codigo-container">
-                  <h3 id="codigo" class="mt-5">6250-8252</h3>
-                  <button id="copyButton" class="btn btn-outline-secondary" type="button">
-                    <i class="fa fa-copy"></i>
-                  </button>
-                  <div id="mensaje-copiado" style="display: none;">
-                    <i class="fa fa-check"></i> Texto copiado
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Información para ACH -->
-        <div data-payment-target="achInfo" class="d-none" data-aos="fade-up">
-          <div class="ach p-5 rounded">
-            <div class="row">
-              <div class="col-md-5 text-center">
-                <img src="/images/payments/ach-campamento-web.png" alt="Pagar con Transferencia Bancaria" class="img-fluid" width="200">
-              </div>
-              <div class="col-md-7 info text-center">
-                <h5 class="fs-3">Transferencia Bancaria</h5>
-                <p>Número de cuenta: 0401985663310</p>
-                <p>Nombre de la cuenta: Hanaley Mosley</p>
-                <p>Cuenta de ahorros</p>
-              </div>
-            </div>
-          </div>
-        </div>
       <% end %>
       <%= render "devise/shared/links" %>
     </div>
@@ -155,33 +155,32 @@ document.addEventListener('turbo:load', function() {
   const totalPriceDisplayReservation = document.getElementById('total_price_display_reservation');
   const remainingAmountDisplay = document.getElementById('remaining_amount_display');
 
-workshopSelector.addEventListener('change', function() {
-  const workshopId = this.value;
-  fetch(`/workshops/${workshopId}/per_student_price`)
-    .then(response => response.json())
-    .then(data => {
-      const price = parseFloat(data.price);
-      const regularPrice = parseFloat(data.regular_price || price);
-      const discountPercentage = parseFloat(data.discount_percentage || 0);
-      const discountedPrice = regularPrice - (regularPrice * (discountPercentage / 100));
-      const totalPrice = discountedPrice;
+  workshopSelector.addEventListener('change', function() {
+    const workshopId = this.value;
+    fetch(`/workshops/${workshopId}/per_student_price`)
+      .then(response => response.json())
+      .then(data => {
+        const price = parseFloat(data.price);
+        const regularPrice = parseFloat(data.regular_price || price);
+        const discountPercentage = parseFloat(data.discount_percentage || 0);
+        const discountedPrice = regularPrice - (regularPrice * (discountPercentage / 100));
+        const totalPrice = discountedPrice;
 
-      document.getElementById('regular_price_display').textContent = regularPrice.toFixed(2) + ' USD';
-      document.getElementById('discount_percentage_display').textContent = discountPercentage.toFixed(2) + '%';
-      document.getElementById('total_price_display').textContent = totalPrice.toFixed(2) + ' USD';
+        regularPriceDisplay.textContent = regularPrice.toFixed(2) + ' USD';
+        discountPercentageDisplay.textContent = discountPercentage.toFixed(2) + '%';
+        totalPriceDisplay.textContent = totalPrice.toFixed(2) + ' USD';
 
-      document.getElementById('regular_price_display_reservation').textContent = regularPrice.toFixed(2) + ' USD';
-      document.getElementById('discount_percentage_display_reservation').textContent = discountPercentage.toFixed(2) + '%';
-      const reservationAmount = (totalPrice / 2).toFixed(2);
-      document.getElementById('reservation_amount_display').textContent = reservationAmount + ' USD';
-      document.getElementById('total_price_display_reservation').textContent = totalPrice.toFixed(2) + ' USD';
-      document.getElementById('remaining_amount_display').textContent = reservationAmount + ' USD';
-    })
-    .catch(error => console.error("Error fetching price:", error));
-});
+        regularPriceDisplayReservation.textContent = regularPrice.toFixed(2) + ' USD';
+        discountPercentageDisplayReservation.textContent = discountPercentage.toFixed(2) + '%';
+        const reservationAmount = (totalPrice / 2).toFixed(2);
+        reservationAmountDisplay.textContent = reservationAmount + ' USD';
+        totalPriceDisplayReservation.textContent = totalPrice.toFixed(2) + ' USD';
+        remainingAmountDisplay.textContent = reservationAmount + ' USD';
+      })
+      .catch(error => console.error("Error fetching price:", error));
+  });
 
-
-const paymentMethodSelector = document.querySelector('[data-payment-target="paymentMethod"]');
+  const paymentMethodSelector = document.querySelector('[data-payment-target="paymentMethod"]');
   const yappyInfo = document.querySelector('[data-payment-target="yappyInfo"]');
   const achInfo = document.querySelector('[data-payment-target="achInfo"]');
   const fullPaymentProof = document.querySelector('[data-payment-target="fullPaymentProof"]');
@@ -191,38 +190,31 @@ const paymentMethodSelector = document.querySelector('[data-payment-target="paym
   const reservationPaymentDetails = document.querySelector('[data-payment-target="reservationPaymentDetails"]');
 
   paymentMethodSelector.addEventListener('change', function() {
+    yappyInfo.classList.add('d-none');
+    achInfo.classList.add('d-none');
+
     if (this.value === 'yappy') {
       yappyInfo.classList.remove('d-none');
-      achInfo.classList.add('d-none');
     } else if (this.value === 'ach') {
-      yappyInfo.classList.add('d-none');
       achInfo.classList.remove('d-none');
-    } else {
-      yappyInfo.classList.add('d-none');
-      achInfo.classList.add('d-none');
     }
   });
 
   paymentOptionSelector.addEventListener('change', function() {
+    fullPaymentProof.classList.add('d-none');
+    reservationPaymentProof.classList.add('d-none');
+    fullPaymentDetails.classList.add('d-none');
+    reservationPaymentDetails.classList.add('d-none');
+
     if (this.value === 'full') {
       fullPaymentProof.classList.remove('d-none');
-      reservationPaymentProof.classList.add('d-none');
       fullPaymentDetails.classList.remove('d-none');
-      reservationPaymentDetails.classList.add('d-none');
     } else if (this.value === 'reservation') {
-      fullPaymentProof.classList.add('d-none');
       reservationPaymentProof.classList.remove('d-none');
-      fullPaymentDetails.classList.add('d-none');
       reservationPaymentDetails.classList.remove('d-none');
-    } else {
-      fullPaymentProof.classList.add('d-none');
-      reservationPaymentProof.classList.add('d-none');
-      fullPaymentDetails.classList.add('d-none');
-      reservationPaymentDetails.classList.add('d-none');
     }
   });
 });
-
 
 document.addEventListener('turbo:load', function() {
   document.getElementById('copyButton').addEventListener('click', function() {
