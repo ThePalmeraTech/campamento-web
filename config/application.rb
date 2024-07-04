@@ -8,6 +8,9 @@ require 'pundit'
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+Dotenv::Rails.load
+
+
 module Webdevworkshop
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
@@ -20,5 +23,9 @@ module Webdevworkshop
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+
+     # Default URL options for Action Mailer
+     config.action_mailer.default_url_options = { host: 'localhost', port: 3000 } if Rails.env.development?
+     config.action_mailer.default_url_options = { host: 'yourdomain.com' } if Rails.env.production?
+   end
   end
-end

@@ -16,6 +16,7 @@
 /tmp/*
 !/log/.keep
 !/tmp/.keep
+/.env
 
 # Ignore pidfiles, but keep the directory.
 /tmp/pids/*
@@ -33,3 +34,7 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+
+# Gmail
+config/secrets/client_secret.json 
+config/secrets/gmail_token.yaml

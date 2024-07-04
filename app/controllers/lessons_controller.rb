@@ -1,8 +1,9 @@
 # app/controllers/lessons_controller.rb
 class LessonsController < ApplicationController
   before_action :set_workshop
-before_action :set_lesson, only: [:show, :edit, :update, :destroy, :toggle_completion]
-before_action :authorize_lesson, only: [:new, :create, :edit, :update, :destroy]
+  before_action :set_lesson, only: [:show, :edit, :update, :destroy, :toggle_completion]
+  before_action :authorize_lesson, except: [:index, :new, :create]
+
 
 
   def new
@@ -21,13 +22,19 @@ before_action :authorize_lesson, only: [:new, :create, :edit, :update, :destroy]
   end
 
   def index
-    @lessons = @workshop.lessons
+    authorize @workshop, :show?
     @lessons = @workshop.lessons.includes(:completions)
-  @completed_lessons = LessonCompletion.where(user: current_user, lesson: @lessons).pluck(:lesson_id)
+    @completed_lessons = LessonCompletion.where(user: current_user, lesson: @lessons).pluck(:lesson_id)
   end
+
 
   def show
     @lesson = Lesson.find(params[:id])
+    @workshop = @lesson.workshop  # Correctamente asignado
+    authorize @workshop  # Verifica que el usuario tenga permiso para ver el taller asociado
+
+    # La siguiente línea podría ser eliminada si solo necesitas mostrar detalles de la lección específica
+    @lessons = @workshop.lessons.presence || []  # Esto es innecesario si solo muestras una lección
   end
 
 
@@ -70,7 +77,8 @@ before_action :authorize_lesson, only: [:new, :create, :edit, :update, :destroy]
 
 
   def next_lesson
-    workshop.lessons.where('id > ?', id).order(:id).first
+    workshop.lessons.where("id > ?", self.id).order(:id).first
+
   end
 
   private
@@ -88,9 +96,8 @@ before_action :authorize_lesson, only: [:new, :create, :edit, :update, :destroy]
   end
 
   def authorize_lesson
-    authorize @lesson || Lesson.new
+    authorize @lesson
   end
-
 
   def lesson_params
     params.require(:lesson).permit(:title, :content)

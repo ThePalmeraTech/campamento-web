@@ -1,31 +1,60 @@
-<div class="container mt-4">
+<div class="container mt-4 text-black">
+
+<!-- Sección para Usuarios en Espera -->
+<section>
+  <h3>Usuarios en Espera</h3>
+  <table class="table table-light table-striped">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>Tipo de Pago</th>
+        <th>Acciones</th>
+        <th>Perfil</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @waiting_users.each do |user| %>
+        <tr>
+          <td><%= user.full_name %></td>
+          <td><%= user.email %></td>
+          <td><%= user.payment_option.present? ? user.payment_option.capitalize : 'No especificado' %></td>
+
+          <td>
+            <%= form_with model: user, url: admin_approve_user_path(user), method: :patch, local: true do |f| %>
+              <%= f.hidden_field :approved, value: true %>
+              <%= f.submit "Aprobar", class: 'btn btn-success btn-sm' %>
+            <% end %>
+          </td>
+          <td><%= link_to 'Ver Perfil', profile_user_path(user), class: 'btn btn-primary btn-sm' %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</section>
+
+
+
+
+  <!-- Sección para Estudiantes (Existente) -->
   <section>
-    <h3 class="text-black">Estudiantes</h3>
+    <h3>Estudiantes</h3>
     <% if @students.any? %>
       <table class="table table-light table-striped">
         <thead>
           <tr>
-            <th>Email</th>
             <th>Nombre</th>
-            <th>Aprobado</th>
+            <th>Email</th>
             <th>Tipo de Pago</th>
-            <th>Acciones</th>
             <th>Perfil</th>
           </tr>
         </thead>
         <tbody>
           <% @students.each do |student| %>
             <tr>
-              <td><%= student.email %></td>
               <td><%= student.full_name %></td>
-              <td><%= student.approved ? 'Sí' : 'No' %></td>
+              <td><%= student.email %></td>
               <td><%= student.payment_option&.capitalize || 'No especificado' %></td>
-              <td>
-                <%= form_with model: student, url: admin_approve_user_path(student), method: :patch do |f| %>
-                  <%= f.hidden_field :approved, value: true %>
-                  <%= f.submit "Aprobar", class: 'btn btn-success btn-sm' %>
-                <% end %>
-              </td>
               <td><%= link_to 'Ver Perfil', profile_user_path(student), class: 'btn btn-primary btn-sm' %></td>
             </tr>
           <% end %>
@@ -36,7 +65,11 @@
     <% end %>
   </section>
 
+
+
+
   <section>
+
     <h3 class="text-black">Aulas</h3>
     <table class="table table-light table-striped">
       <thead>
@@ -71,25 +104,23 @@
   </section>
 
   <section>
-    <h3 class="text-white">Coders</h3>
+    <h3 class="text-black">Coders</h3>
 <div data-controller="pagination" data-total-pages="<%= @total_pages %>">
   Total pages: <%= @total_pages %> <!-- Esto imprimirá el valor en la página para depuración -->
 
   <table class="table table-light table-striped">
     <thead>
       <tr>
-        <th>Email</th>
         <th>Nombre</th>
-        <th>Aprobado</th>
+        <th>Email</th>
         <th>Perfil</th>
       </tr>
     </thead>
     <tbody data-pagination-target="entries">
       <% @coders.each do |coder| %>
         <%= content_tag :tr do %>
-          <td><%= coder.email %></td>
           <td><%= coder.full_name %></td>
-          <td><%= coder.approved ? 'Sí' : 'No' %></td>
+          <td><%= coder.email %></td>
           <td><%= link_to 'Ver Perfil', profile_user_path(coder), class: 'btn btn-primary btn-sm' %></td>
         <% end %>
       <% end %>
@@ -104,4 +135,7 @@
 </div>
 
   </section>
+
+  </div>
+
 </div>

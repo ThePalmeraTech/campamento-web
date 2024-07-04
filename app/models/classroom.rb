@@ -1,6 +1,6 @@
 class Classroom < ApplicationRecord
   belongs_to :teacher, class_name: 'User', foreign_key: 'teacher_id'
-  belongs_to :workshop, optional: true  # Esto es correcto si la relación es opcional
+  belongs_to :workshop
   has_many :classroom_students
   has_many :students, through: :classroom_students, source: :user
   has_many :class_sessions, dependent: :destroy
@@ -9,18 +9,17 @@ class Classroom < ApplicationRecord
 
   validates :teacher, presence: true
   validates :workshop_id, presence: true, unless: -> { workshop.blank? }
-  validate :teacher_must_be_admin
+  validates :regular_price, numericality: { greater_than_or_equal_to: 0 }, presence: true
+  validates :discount_percentage, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }, presence: true
+  validates :price_per_student, numericality: { greater_than: 0 }
   validates :status, inclusion: { in: %w[Abierto Completo Finalizado] }
+  validate :valid_status_transition, if: :status_changed?
+  before_save :calculate_total_price
+  after_save :update_student_roles, if: -> { saved_change_to_status? && status == 'Finalizado' }
 
-  validate :only_one_active_classroom, on: :create
-  validate :limit_students, on: :create
-
-  before_save :update_final_student_count, if: -> { status_changed? && status == 'Finalizado' }
-  before_update :update_student_roles, if: -> { status_changed? && status == 'Finalizado' }
-  after_save :update_status_if_full, unless: -> { status == 'Finalizado' }
 
   def to_label
-    "Aula #{id}: #{status}"  # Ajusta esto según cómo deseas que se muestre
+    "Aula #{id}: #{status}"  # Customize display
   end
 
   def total_cost
@@ -29,46 +28,38 @@ class Classroom < ApplicationRecord
 
   def next_session_start_time
     next_session = class_sessions.where("session_date >= ?", Date.today).order(:session_date, :start_time).first
-    next_session&.start_datetime  # Retorna nil si no hay próxima sesión
+    next_session&.start_datetime
   end
 
   private
 
-  def update_status_if_full
-    if students.count >= 11 && status != 'En clase'
-      update_column(:status, 'En clase')
+  def calculate_total_price
+    if regular_price.present?
+      if discount_percentage.present? && discount_percentage > 0
+        self.price_per_student = regular_price - (regular_price * (discount_percentage / 100.0))
+      else
+        self.price_per_student = regular_price
+      end
     end
   end
 
-  def only_one_active_classroom
-    active_classroom = Classroom.where(status: ["Abierto", "En clase"]).first
-    if active_classroom && status != 'Finalizado'
-      errors.add(:base, "Ya existe un aula activa.")
-    end
-  end
-
-  def limit_students
-    if students.count >= 11
-      errors.add(:base, 'El aula no puede tener más de 11 estudiantes.')
-    end
-  end
-
-  def update_student_roles
-    students.each do |student|
-      student.update(role: 'Coder')
-    end
-  end
-
-
-  # Validación personalizada para asegurar que el profesor sea admin
   def teacher_must_be_admin
     errors.add(:teacher_id, "must be an admin") unless teacher&.admin?
   end
 
-  def update_final_student_count
-    self.final_student_count = students.count
+
+
+  def valid_status_transition
+    if status == 'Finalizado' && !%w[Abierto Completo].include?(status_was)
+      errors.add(:status, "can only be set to 'Finalizado' if it was previously 'Abierto' or 'Completo'")
+    end
   end
 
 
+  def update_student_roles
+    students.each do |student|
+      student.update(role: 'Coders') unless student.role == 'Coders'
+    end
+  end
 
 end

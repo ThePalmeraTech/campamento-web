@@ -1,39 +1,56 @@
-# app/controllers/registrations_controller.rb
 class RegistrationsController < Devise::RegistrationsController
-  include ClassroomHelper
-  skip_before_action :check_user_approved, only: [:new, :create, :cancel]
-  before_action :set_classroom, only: [:create]
-  before_action :configure_sign_up_params, only: [:create]
+  before_action :configure_sign_up_params, only: [:create, :new]
 
-
-  def create
-    super do |user|
-      if user.persisted?
-        if @classroom
-          @classroom.classroom_students.create(user: user) # Asociar usuario al classroom
-          flash[:notice] = "Registered successfully and added to the classroom!"
-        else
-          user.update(role: 'waiting') # O alguna lógica si no hay classroom disponible
-          flash[:alert] = "No classroom available, placed on waiting list."
-        end
+  def new
+    super
+    @workshops = Workshop.all
+    if params[:user] && params[:user][:workshop_id].present?
+      workshop_id = params[:user][:workshop_id]
+      logger.info "Workshop ID received: #{workshop_id}"
+      classroom = Classroom.where(workshop_id: workshop_id).order(created_at: :desc).first
+      if classroom
+        @price_per_student = classroom.price_per_student
+        logger.info "Price per student set to #{@price_per_student}"
+      else
+        logger.info "No classroom found for workshop_id #{workshop_id}"
       end
+    else
+      logger.info "No workshop_id found in params"
     end
   end
 
-  private
-
-  def set_classroom
-    @classroom = Classroom.where(status: 'Abierto').find_by('students_count < ?', 9)
+  def create
+    super do |user|
+      user.role = 'estudiante' unless user.admin?
+      user.approved = false unless user.admin?
+      user.save!
+    end
   end
 
   protected
 
-  def configure_sign_up_params
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:payment_method, :full_name, :phone, :age, :country, :city, :previous_experience, :previous_courses, :programming_skill_level, :motivation, :course_expectations, :specific_goals, :has_reliable_computer, :feedback_on_previous_courses])
+  def after_sign_up_path_for(resource)
+    resource.admin? ? admin_dashboard_path : waiting_approval_path
   end
 
-  def after_sign_up_path_for(resource)
-    waiting_approval_path  # Redirige a la ruta que informa al usuario que debe esperar la aprobación
+  def configure_sign_up_params
+    devise_parameter_sanitizer.permit(:sign_up, keys: [
+      :full_name, :email, :password, :password_confirmation, :phone,
+      :workshop_id, :payment_option, :full_payment_proof, :reservation_payment_proof,
+      :age, :country, :city, :previous_experience, :previous_courses,
+      :programming_skill_level, :motivation, :course_expectations,
+      :specific_goals, :has_reliable_computer, :feedback_on_previous_courses
+    ])
+  end
+
+  private
+
+  def sign_up_params
+    params.require(:user).permit(:full_name, :email, :password, :password_confirmation, :phone, :workshop_id, :payment_option, :payment_method, :payment_proof, :reservation_payment_proof, :full_payment_proof)
+  end
+
+  def account_update_params
+    params.require(:user).permit(:full_name, :email, :password, :password_confirmation, :current_password, :phone, :workshop_id, :payment_option, :payment_method, :payment_proof, :reservation_payment_proof, :full_payment_proof)
   end
 
 end
