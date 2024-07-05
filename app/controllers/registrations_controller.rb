@@ -3,8 +3,6 @@ class RegistrationsController < Devise::RegistrationsController
   skip_before_action :authenticate_user!, only: [:check_email]
   skip_before_action :verify_authenticity_token, only: [:check_email]
 
-
-
   def new
     @user = User.new
     @workshops = Workshop.all
@@ -29,6 +27,12 @@ class RegistrationsController < Devise::RegistrationsController
 
   def create
     build_resource(sign_up_params)
+
+    if resource.payment_option == "reservation"
+      resource.payment_status = "reservation"
+    else
+      resource.payment_status = "complete"
+    end
 
     if resource.save
       yield resource if block_given?
@@ -72,7 +76,7 @@ class RegistrationsController < Devise::RegistrationsController
   def configure_sign_up_params
     devise_parameter_sanitizer.permit(:sign_up, keys: [
       :full_name, :email, :password, :password_confirmation, :phone,
-      :workshop_id, :payment_option, :full_payment_proof, :reservation_payment_proof,
+      :workshop_id, :payment_option, :payment_method, :full_payment_proof, :reservation_payment_proof,
       :age, :country, :city, :previous_experience, :previous_courses,
       :programming_skill_level, :motivation, :course_expectations,
       :specific_goals, :has_reliable_computer, :feedback_on_previous_courses

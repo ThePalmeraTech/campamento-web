@@ -270,6 +270,32 @@
 
 
 
+/* UPLOAD FILE PROOF OF PAYMENT */
+
+.custom-file-upload {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #ccc;
+  border-radius: 4px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  color: #666;
+  font-size: 16px;
+}
+
+.custom-file-upload input[type="file"] {
+  display: none;
+}
+
+.custom-file-upload:hover {
+  background-color: #f0f0f0;
+}
+
+
+
 
 
 
@@ -307,7 +333,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/components/prism-javascript.min.js"></script>
 
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  
+
 <script>
 document.addEventListener('turbo:load', function() {
   // Reinicializar AOS

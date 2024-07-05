@@ -6,7 +6,6 @@ Rails.application.routes.draw do
     registrations: 'registrations'
   }
 
-
   authenticated :user do
     root to: 'home#index', as: :authenticated_root
   end
@@ -15,15 +14,17 @@ Rails.application.routes.draw do
     root to: redirect('/users/sign_in'), as: :unauthenticated_root
   end
 
-   devise_scope :user do
+  devise_scope :user do
     get '/users/check_email', to: 'registrations#check_email'
   end
 
   get 'profile', to: 'users#profile', as: 'user_profile'
+  get 'waiting_approval', to: 'static_pages#waiting_approval', as: 'waiting_approval'
 
   resources :users, only: [:destroy, :show] do
     member do
       get :profile, as: 'profile'
+      post :upload_second_payment
     end
   end
 
@@ -34,7 +35,6 @@ Rails.application.routes.draw do
     resources :coders, only: [:index]
   end
 
-  get 'waiting_approval', to: 'static_pages#waiting_approval'
   resources :classrooms, only: [:new, :create, :show, :index, :edit, :update, :destroy]
   resources :class_sessions
 
@@ -51,6 +51,4 @@ Rails.application.routes.draw do
   end
 
   resources :dashboard, only: [:index], controller: 'admin/dashboard'
-
-
 end

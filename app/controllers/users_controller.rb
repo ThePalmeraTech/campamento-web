@@ -34,6 +34,20 @@ class UsersController < ApplicationController
     end
   end
 
+  def waiting_approval
+    @user = current_user
+  end
+
+  def upload_second_payment
+    @user = current_user
+    if @user.update(second_payment_proof_params)
+      @user.update(payment_status: 'complete')
+      redirect_to waiting_approval_path, notice: 'Comprobante de pago actualizado correctamente.'
+    else
+      redirect_to waiting_approval_path, alert: 'Error al subir el comprobante de pago.'
+    end
+  end
+
   private
 
   def set_user
@@ -43,4 +57,9 @@ class UsersController < ApplicationController
   def user_params
     params.require(:user).permit(:name, :email, :role)
   end
+
+  def second_payment_proof_params
+    params.require(:user).permit(:second_payment_proof)
+  end
+  
 end

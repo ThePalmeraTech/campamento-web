@@ -16,7 +16,13 @@ export default class extends Controller {
     this.updateStepVisibility();
     this.initializeProgressBars();
     this.validateStep();
+    this.setDefaultPreviews();
     console.log("Payment controller connected");
+  }
+
+  setDefaultPreviews() {
+    this.fullPaymentPreviewTarget.src = "https://placehold.co/400";
+    this.reservationPaymentPreviewTarget.src = "https://placehold.co/400";
   }
 
   updateStepVisibility() {
@@ -70,7 +76,11 @@ export default class extends Controller {
       const reader = new FileReader();
       reader.onload = e => {
         const preview = (input.name.includes("full_payment_proof")) ? this.fullPaymentPreviewTarget : this.reservationPaymentPreviewTarget;
-        preview.src = e.target.result;
+        if (file.type === 'application/pdf') {
+          preview.src = 'https://placehold.co/400';
+        } else {
+          preview.src = e.target.result;
+        }
         preview.classList.remove('d-none');
       };
       reader.readAsDataURL(file);
@@ -146,7 +156,6 @@ export default class extends Controller {
         'Accept': 'application/json'
       }
     })
-    
     .then(response => {
       if (!response.ok) {
         console.error('Response status:', response.status);
@@ -175,6 +184,7 @@ export default class extends Controller {
       validationMessage.classList.remove("text-success");
     });
   }
+
   validatePassword(event) {
     const passwordField = event.target;
     const passwordValue = passwordField.value;

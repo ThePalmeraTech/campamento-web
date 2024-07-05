@@ -6,6 +6,7 @@ class User < ApplicationRecord
   has_many :classrooms, through: :classroom_students
   has_one_attached :full_payment_proof
   has_one_attached :reservation_payment_proof
+  has_one_attached :second_payment_proof
 
   validate :at_least_one_payment_proof
   validate :must_have_active_classroom, if: -> { role == 'estudiante' }
@@ -26,7 +27,6 @@ class User < ApplicationRecord
   validates :workshop_id, presence: true
 
   validate :unique_email, on: :create
-
 
   def admin?
     role == 'admin'
