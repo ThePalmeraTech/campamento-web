@@ -25,6 +25,9 @@ class User < ApplicationRecord
   validates :phone, presence: true
   validates :workshop_id, presence: true
 
+  validate :unique_email, on: :create
+
+
   def admin?
     role == 'admin'
   end
@@ -38,6 +41,12 @@ class User < ApplicationRecord
   end
 
   private
+
+  def unique_email
+    if User.where(email: email).exists?
+      errors.add(:email, 'ya está registrado en el sistema.')
+    end
+  end
 
   def at_least_one_payment_proof
     unless full_payment_proof.attached? || reservation_payment_proof.attached?

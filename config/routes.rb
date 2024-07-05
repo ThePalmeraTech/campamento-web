@@ -15,6 +15,10 @@ Rails.application.routes.draw do
     root to: redirect('/users/sign_in'), as: :unauthenticated_root
   end
 
+   devise_scope :user do
+    get '/users/check_email', to: 'registrations#check_email'
+  end
+
   get 'profile', to: 'users#profile', as: 'user_profile'
 
   resources :users, only: [:destroy, :show] do
@@ -47,4 +51,6 @@ Rails.application.routes.draw do
   end
 
   resources :dashboard, only: [:index], controller: 'admin/dashboard'
+
+
 end

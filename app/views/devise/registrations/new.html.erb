@@ -2,6 +2,12 @@
   <div class="row">
     <div class="col-md-8 offset-md-2 text-black bg-light" data-controller="payment" data-aos="fade-up">
       <%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: 'form-horizontal' }) do |f| %>
+        <div id="alert-container" class="d-none">
+          <p class="alert alert-danger" data-controller="notification" data-notification-alert-target="alert">
+            <%= flash[:alert] %>
+          </p>
+        </div>
+
         <%= f.error_notification %>
         <% if resource.errors.any? %>
           <div class="alert alert-danger">
@@ -19,7 +25,10 @@
           <fieldset class="mb-3">
             <legend>Información Personal</legend>
             <%= f.input :full_name, label: 'Nombre completo', required: true, autofocus: true, input_html: { class: 'form-control required-field', 'data-payment-target': 'requiredField', 'data-action': 'input->payment#validateStep' } %>
-            <%= f.input :email, required: true, input_html: { class: 'form-control required-field', 'data-payment-target': 'emailField', 'data-action': 'input->payment#validateStep input->payment#validateEmail' } %>
+           <%= f.input :email, required: true, input_html: { class: 'form-control required-field', 'data-payment-target': 'emailField', 'data-action': 'input->payment#validateStep input->payment#validateEmail' } %>
+<div data-payment-target="emailError" class="text-danger"></div>
+<div data-payment-target="emailValidationMessage" class="mt-2"></div>
+
             <div data-payment-target="emailError" class="text-danger"></div>
             <%= f.input :password, required: true, input_html: { class: 'form-control required-field', 'data-payment-target': 'passwordField', 'data-action': 'input->payment#validateStep input->payment#validatePassword' }, autocomplete: "new-password" %>
             <div data-payment-target="passwordRequirements" class="mt-2">
@@ -115,9 +124,9 @@
             <div class="d-none" data-payment-target="fullPaymentProof">
               <label class="btn btn-primary">
                 Subir comprobante de pago completo
-                <%= f.file_field :full_payment_proof, direct_upload: true, class: 'd-none', data: { action: "change->payment#uploadFile", payment_target: "fileInput" }, accept: 'image/jpeg,image/png,application/pdf' %>
+                <%= f.file_field :full_payment_proof, direct_upload: true, class: 'd-none', data: { action: "change->payment#uploadFile", payment_target: "fullFileInput" }, accept: 'image/jpeg,image/png,application/pdf' %>
               </label>
-              <img src="" alt="Preview" class="d-none" data-payment-target="filePreview" style="max-width: 200px;">
+              <img src="" alt="Preview" class="d-none" data-payment-target="fullFilePreview" style="max-width: 200px;">
               <div class="progress d-none" data-payment-target="fullPaymentProgress">
                 <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
@@ -125,9 +134,9 @@
             <div class="d-none" data-payment-target="reservationPaymentProof">
               <label class="btn btn-primary">
                 Subir comprobante de pago de reserva
-                <%= f.file_field :reservation_payment_proof, direct_upload: true, class: 'd-none', data: { action: "change->payment#uploadFile", payment_target: "fileInput" }, accept: 'image/jpeg,image/png,application/pdf' %>
+                <%= f.file_field :reservation_payment_proof, direct_upload: true, class: 'd-none', data: { action: "change->payment#uploadFile", payment_target: "reservationFileInput" }, accept: 'image/jpeg,image/png,application/pdf' %>
               </label>
-              <img src="" alt="Preview" class="d-none" data-payment-target="filePreview" style="max-width: 200px;">
+              <img src="" alt="Preview" class="d-none" data-payment-target="reservationFilePreview" style="max-width: 200px;">
               <div class="progress d-none" data-payment-target="reservationPaymentProgress">
                 <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
@@ -228,6 +237,38 @@ document.addEventListener('turbo:load', function() {
     }).catch(function() {
       console.error('Error al copiar el texto');
     });
+  });
+});
+</script>
+
+<script>
+document.addEventListener('turbo:load', function() {
+  const fullFileInput = document.querySelector('[data-payment-target="fullFileInput"]');
+  const reservationFileInput = document.querySelector('[data-payment-target="reservationFileInput"]');
+
+  function showFilePreview(input, previewTarget) {
+    const file = input.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const preview = document.querySelector(previewTarget);
+        if (file.type === 'application/pdf') {
+          preview.src = 'https://placehold.co/400';
+        } else {
+          preview.src = e.target.result;
+        }
+        preview.classList.remove('d-none');
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  fullFileInput.addEventListener('change', function() {
+    showFilePreview(this, '[data-payment-target="fullFilePreview"]');
+  });
+
+  reservationFileInput.addEventListener('change', function() {
+    showFilePreview(this, '[data-payment-target="reservationFilePreview"]');
   });
 });
 </script>
