@@ -37,6 +37,8 @@ class RegistrationsController < Devise::RegistrationsController
     if resource.save
       yield resource if block_given?
       if resource.persisted?
+        send_welcome_email(resource)
+        send_admin_notification(resource)
         if resource.active_for_authentication?
           set_flash_message! :notice, :signed_up
           sign_up(resource_name, resource)
@@ -91,5 +93,17 @@ class RegistrationsController < Devise::RegistrationsController
 
   def account_update_params
     params.require(:user).permit(:full_name, :email, :password, :password_confirmation, :current_password, :phone, :workshop_id, :payment_option, :payment_method, :full_payment_proof, :reservation_payment_proof)
+  end
+
+  def send_welcome_email(user)
+    if user.payment_status == "complete"
+      UserMailer.welcome_email(user).deliver_now
+    else
+      UserMailer.reservation_email(user).deliver_now
+    end
+  end
+
+  def send_admin_notification(user)
+    UserMailer.new_user_notification(user).deliver_now
   end
 end

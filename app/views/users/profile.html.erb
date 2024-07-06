@@ -96,6 +96,19 @@
               <p>No se ha subido comprobante de reserva.</p>
             <% end %>
 
+            <% if @user.second_payment_proof.attached? %>
+              <div class="mb-4">
+                <% if @user.second_payment_proof.content_type == 'application/pdf' %>
+                  <%= image_tag 'https://placehold.co/400', class: "img-fluid" %>
+                <% else %>
+                  <%= image_tag @user.second_payment_proof, class: "img-fluid" %>
+                <% end %>
+                <%= link_to "Descargar Segundo Comprobante", rails_blob_path(@user.second_payment_proof, disposition: "attachment"), class: "btn btn-primary mt-2" %>
+              </div>
+            <% else %>
+              <p>No se ha subido el segundo comprobante de pago.</p>
+            <% end %>
+
           </div>
         </div>
       </div>

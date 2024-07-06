@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-  attr_accessor :skip_password_validation
+  attr_accessor :skip_password_validation, :uploading_second_payment
 
   belongs_to :workshop, optional: true
   has_many :classroom_students, dependent: :destroy
@@ -8,9 +8,9 @@ class User < ApplicationRecord
   has_one_attached :reservation_payment_proof
   has_one_attached :second_payment_proof
 
-  validate :at_least_one_payment_proof
+  validate :at_least_one_payment_proof, unless: :uploading_second_payment?
   validate :must_have_active_classroom, if: -> { role == 'estudiante' }
-  validate :validate_payment_proof_mime_type
+  validate :validate_payment_proof_mime_type, unless: :uploading_second_payment?
 
   has_many :lesson_completions, dependent: :destroy
 
@@ -21,8 +21,8 @@ class User < ApplicationRecord
 
   validates :full_name, presence: true
   validates :email, presence: true, uniqueness: true
-  validates :password, presence: true, length: { minimum: 7 }, unless: -> { skip_password_validation }
-  validates :password_confirmation, presence: true, unless: -> { skip_password_validation }
+  validates :password, presence: true, length: { minimum: 7 }, unless: -> { skip_password_validation || uploading_second_payment? }
+  validates :password_confirmation, presence: true, unless: -> { skip_password_validation || uploading_second_payment? }
   validates :phone, presence: true
   validates :workshop_id, presence: true
 
@@ -38,6 +38,10 @@ class User < ApplicationRecord
 
   def coder?
     role == 'coder'
+  end
+
+  def uploading_second_payment?
+    uploading_second_payment
   end
 
   private
@@ -67,5 +71,6 @@ class User < ApplicationRecord
   def validate_payment_proof_mime_type
     errors.add(:full_payment_proof, 'must be a JPEG, PNG, or PDF file.') if full_payment_proof.attached? && !full_payment_proof.content_type.in?(%w(image/jpeg image/png application/pdf))
     errors.add(:reservation_payment_proof, 'must be a JPEG, PNG, or PDF file.') if reservation_payment_proof.attached? && !reservation_payment_proof.content_type.in?(%w(image/jpeg image/png application/pdf))
+    errors.add(:second_payment_proof, 'must be a JPEG, PNG, or PDF file.') if second_payment_proof.attached? && !second_payment_proof.content_type.in?(%w(image/jpeg image/png application/pdf))
   end
 end

@@ -4,16 +4,15 @@
       <!-- Mostrar el campo para adjuntar el segundo pago -->
       <div class="second-payment">
         <h2>Completa tu Pago</h2>
-        <form action="<%= upload_second_payment_user_path(@user) %>" method="post" enctype="multipart/form-data">
-          <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+        <%= form_with model: @user, url: upload_second_payment_user_path(@user), local: true, method: :post, multipart: true do |form| %>
           <label class="custom-file-upload">
             <i class="fas fa-cloud-upload-alt fa-3x"></i>
             <br>
             Adjunta el comprobante del segundo pago.
-            <input type="file" name="user[second_payment_proof]" accept="image/jpeg,image/png,application/pdf">
+            <%= form.file_field :second_payment_proof, accept: "image/jpeg,image/png,application/pdf" %>
           </label>
-          <button type="submit" class="btn btn-primary mt-3">Enviar</button>
-        </form>
+          <%= form.submit "Enviar", class: "btn btn-primary mt-3" %>
+        <% end %>
       </div>
     <% elsif @user.payment_status == "complete" || @user.second_payment_proof.present? %>
       <!-- Mostrar mensaje de que la inscripción está en proceso de aprobación -->

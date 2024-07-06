@@ -26,6 +26,22 @@ class Admin::DashboardController < ApplicationController
     end
   end
 
+# app/controllers/admin/dashboard_controller.rb
+def income_report
+  authorize :dashboard, :admin_access?
+
+  @total_income = Classroom.all.sum(&:total_cost)
+  workshops = Workshop.includes(:classrooms).all
+
+  @workshops = workshops.map do |workshop|
+    {
+      name: workshop.name,
+      income: workshop.classrooms.sum(&:total_cost)
+    } if workshop.classrooms.any?
+  end.compact  # Ensure no nil entries and @workshops is always an array
+end
+
+
   private
 
   def ensure_admin
