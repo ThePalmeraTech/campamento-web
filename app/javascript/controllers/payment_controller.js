@@ -1,3 +1,4 @@
+// app/javascript/controllers/payment_controller.js
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
@@ -7,14 +8,21 @@ export default class extends Controller {
     "passwordUppercase", "passwordSpecial", "passwordNumber", "emailError",
     "passwordError", "paymentOption", "paymentMethod", "fileInput",
     "fullPaymentMethod", "reservationPaymentMethod", "yappyInfo", "achInfo",
-    "fullPaymentProof", "reservationPaymentProof", "filePreview", "fileProgress"
+    "fullPaymentProof", "reservationPaymentProof", "filePreview", "fullPaymentPreview", "reservationPaymentPreview",
+    "emailValidationMessage"
   ];
 
   connect() {
     this.updateStepVisibility();
     this.initializeProgressBars();
-    this.validateStep(); // Validate step on initial load
+    this.validateStep();
+    this.setDefaultPreviews();
     console.log("Payment controller connected");
+  }
+
+  setDefaultPreviews() {
+    this.fullPaymentPreviewTarget.src = "https://placehold.co/400";
+    this.reservationPaymentPreviewTarget.src = "https://placehold.co/400";
   }
 
   updateStepVisibility() {
@@ -29,7 +37,7 @@ export default class extends Controller {
     if (nextStep) {
       this.stepTargets[currentStepIndex].classList.remove('step-active');
       nextStep.classList.add('step-active');
-      this.validateStep(); // Validate the new step
+      this.validateStep();
       AOS.refresh();
     }
   }
@@ -40,7 +48,7 @@ export default class extends Controller {
     if (previousStep) {
       this.stepTargets[currentStepIndex].classList.remove('step-active');
       previousStep.classList.add('step-active');
-      this.validateStep(); // Validate the previous step
+      this.validateStep();
       AOS.refresh();
     }
   }
@@ -57,13 +65,8 @@ export default class extends Controller {
 
   showPaymentProof(event) {
     const option = event.target.value;
-    const fullContainer = this.fullPaymentProofTarget;
-    const reservationContainer = this.reservationPaymentProofTarget;
-
-    fullContainer.classList.toggle('d-none', option !== "full");
-    reservationContainer.classList.toggle('d-none', option !== "reservation");
-
-    this.updateProofVisibility(option);
+    this.fullPaymentProofTarget.classList.toggle('d-none', option !== "full");
+    this.reservationPaymentProofTarget.classList.toggle('d-none', option !== "reservation");
   }
 
   uploadFile(event) {
@@ -72,13 +75,17 @@ export default class extends Controller {
     if (file) {
       const reader = new FileReader();
       reader.onload = e => {
-        const preview = this.filePreviewTarget;
-        preview.src = e.target.result;
+        const preview = (input.name.includes("full_payment_proof")) ? this.fullPaymentPreviewTarget : this.reservationPaymentPreviewTarget;
+        if (file.type === 'application/pdf') {
+          preview.src = 'https://placehold.co/400';
+        } else {
+          preview.src = e.target.result;
+        }
         preview.classList.remove('d-none');
       };
       reader.readAsDataURL(file);
     }
-    this.validateStep(); // Validate step when file is uploaded
+    this.validateStep();
   }
 
   initializeProgressBars() {
@@ -112,17 +119,70 @@ export default class extends Controller {
 
   validateEmail(event) {
     const emailField = event.target;
-    const emailValue = emailField.value;
+    const emailValue = emailField.value.trim();
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     const emailError = this.emailErrorTarget;
+    const validationMessage = this.emailValidationMessageTarget;
+
+    if (emailValue === "") {
+      emailError.textContent = "";
+      validationMessage.textContent = "";
+      validationMessage.classList.remove("text-success", "text-danger");
+      return;
+    }
+
     if (emailPattern.test(emailValue)) {
       emailField.setCustomValidity("");
       emailError.textContent = "";
+      this.checkEmailUniqueness(emailValue);
     } else {
       emailField.setCustomValidity("Por favor, ingrese un correo electrónico válido.");
       emailError.textContent = "Por favor, ingrese un correo electrónico válido.";
+      validationMessage.textContent = "";
+      validationMessage.classList.remove("text-success", "text-danger");
     }
     this.validateStep();
+  }
+
+  checkEmailUniqueness(email) {
+    const validationMessage = this.emailValidationMessageTarget;
+    validationMessage.textContent = "Verificando...";
+    validationMessage.classList.remove("text-success", "text-danger");
+
+    fetch(`/users/check_email?email=${encodeURIComponent(email)}`, {
+      method: 'GET',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'Accept': 'application/json'
+      }
+    })
+    .then(response => {
+      if (!response.ok) {
+        console.error('Response status:', response.status);
+        console.error('Response status text:', response.statusText);
+        return response.text().then(text => {
+          throw new Error(`HTTP error! status: ${response.status}, body: ${text}`);
+        });
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (data.unique) {
+        validationMessage.textContent = "Email disponible";
+        validationMessage.classList.add("text-success");
+        validationMessage.classList.remove("text-danger");
+      } else {
+        validationMessage.textContent = "Email ya está en uso";
+        validationMessage.classList.add("text-danger");
+        validationMessage.classList.remove("text-success");
+      }
+    })
+    .catch(error => {
+      console.error('Error completo:', error);
+      validationMessage.textContent = "Error al verificar el email";
+      validationMessage.classList.add("text-danger");
+      validationMessage.classList.remove("text-success");
+    });
   }
 
   validatePassword(event) {

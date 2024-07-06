@@ -33,9 +33,9 @@ class ApplicationController < ActionController::Base
   # Método para verificar si un usuario está aprobado para acceder a páginas internas.
   # Los administradores siempre están aprobados por defecto.
   def check_user_approved
-    unless current_user.approved? || current_user.admin?
-      redirect_to waiting_approval_path, alert: 'Su cuenta aún no ha sido aprobada por un administrador.'
-    end
+    return if devise_controller? || current_user&.approved? || current_user&.admin? || request.path == waiting_approval_path
+
+    redirect_to waiting_approval_path, alert: 'Su cuenta aún no ha sido aprobada por un administrador.'
   end
 
   # Método para manejar acceso no autorizado con redirección y alerta adecuadas.

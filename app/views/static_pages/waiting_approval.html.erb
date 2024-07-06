@@ -1,14 +1,31 @@
 <div class="container mt-5">
-    <div class="bg-light text-black p-4 rounded p-5">
-        <h1>Espera de Aprobación</h1>
-          <p class="fs-4">Has tomado la sabia decisión de unirte a nuestro <strong>Campamento Web</strong>,</p>
-          <br><hr>
-        <h2>¿Qué sigue?</h2>
-
-        <p class="fs-4">Marca en tu calendario: <strong>9, 10 y 12 de junio a las 7 PM</strong>. Asegúrate de cargar bien tu laptop, preparar tu mejor taza de café o té y acomodarte en tu silla, porque vamos a embarcarnos en una travesía que transformará tu forma de ver (y hacer) las páginas web.</p>
-        <p class="fs-4">Recibirás pronto un email con todos los detalles necesarios para iniciar esta epopeya digital. Mientras tanto, ¿por qué no practicas haciendo clic derecho y "inspeccionar" en cualquier página web? Podrías descubrir los secretos que se esconden detrás de tus sitios favoritos.</p>
-       <br>
-        <h3>¡Nos vemos en el campamento!</h3>
-        <p class="fs-6">PD: Tu cuenta ha sido creada exitosamente y está en espera de aprobación por un administrador. Recibirás un correo electrónico una vez que su cuenta haya sido activada.</p>
-    </div>
+  <div class="bg-light text-black p-4 rounded p-5">
+    <% if @user.payment_status == "reservation" && @user.second_payment_proof.blank? %>
+      <!-- Mostrar el campo para adjuntar el segundo pago -->
+      <div class="second-payment">
+        <h2>Completa tu Pago</h2>
+        <%= form_with model: @user, url: upload_second_payment_user_path(@user), local: true, method: :post, multipart: true do |form| %>
+          <label class="custom-file-upload">
+            <i class="fas fa-cloud-upload-alt fa-3x"></i>
+            <br>
+            Adjunta el comprobante del segundo pago.
+            <%= form.file_field :second_payment_proof, accept: "image/jpeg,image/png,application/pdf" %>
+          </label>
+          <%= form.submit "Enviar", class: "btn btn-primary mt-3" %>
+        <% end %>
+      </div>
+    <% elsif @user.payment_status == "complete" || @user.second_payment_proof.present? %>
+      <!-- Mostrar mensaje de que la inscripción está en proceso de aprobación -->
+      <div class="waiting-approval">
+        <h2>Tu inscripción está en proceso de aprobación</h2>
+        <p>Gracias por completar tu pago. Recibirás una notificación cuando tu inscripción haya sido aprobada.</p>
+      </div>
+    <% else %>
+      <!-- Caso para usuarios con pago completo -->
+      <div class="waiting-approval">
+        <h2>Tu inscripción está en proceso de aprobación</h2>
+        <p>No necesitas realizar ningún pago adicional. Recibirás una notificación cuando tu inscripción haya sido aprobada.</p>
+      </div>
+    <% end %>
+  </div>
 </div>

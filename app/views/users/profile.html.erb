@@ -19,27 +19,26 @@
       </div>
 
       <div class="card bg-light text-black mb-4">
-  <div class="card-header">
-    <h4>Clases Inscritas</h4>
-  </div>
-  <div class="card-body">
-    <ul>
-      <% @user.classrooms.each do |classroom| %>
-        <li>
-          <%= classroom.to_label %> - <%= link_to "Detalles", classroom_path(classroom), class: 'text-info' %>
-          <% if classroom.workshop %>
-            <div class="progress" style="height: 20px;">
-              <div class="progress-bar" role="progressbar" style="width: <%= classroom.workshop.progress_for(@user) %>%;" aria-valuenow="<%= classroom.workshop.progress_for(@user) %>" aria-valuemin="0" aria-valuemax="100">
-                <%= classroom.workshop.progress_for(@user) %>% Completado
-              </div>
-            </div>
-          <% end %>
-        </li>
-      <% end %>
-    </ul>
-  </div>
-</div>
-
+        <div class="card-header">
+          <h4>Clases Inscritas</h4>
+        </div>
+        <div class="card-body">
+          <ul>
+            <% @user.classrooms.each do |classroom| %>
+              <li>
+                <%= classroom.to_label %> - <%= link_to "Detalles", classroom_path(classroom), class: 'text-info' %>
+                <% if classroom.workshop %>
+                  <div class="progress" style="height: 20px;">
+                    <div class="progress-bar" role="progressbar" style="width: <%= classroom.workshop.progress_for(@user) %>%;" aria-valuenow="<%= classroom.workshop.progress_for(@user) %>" aria-valuemin="0" aria-valuemax="100">
+                      <%= classroom.workshop.progress_for(@user) %>% Completado
+                    </div>
+                  </div>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
 
       <div class="card bg-light text-black">
         <div class="card-header">
@@ -57,7 +56,7 @@
 
     <% if current_user.admin? %>
       <div class="col-md-6">
-        <div class="card bg-dark text-white">
+        <div class="card bg-dark text-white mb-4">
           <div class="card-header">
             <h4>Información de Programación</h4>
           </div>
@@ -70,12 +69,46 @@
             <p><i class="fas fa-bullseye mr-2"></i><strong>Objetivos Específicos:</strong> <%= @user.specific_goals %></p>
             <p><i class="fas fa-desktop mr-2"></i><strong>Acceso a Computadora Confiable:</strong> <%= @user.has_reliable_computer ? "Sí" : "No" %></p>
             <p><i class="fas fa-comments mr-2"></i><strong>Feedback sobre Cursos Previos:</strong> <%= @user.feedback_on_previous_courses %></p>
+
             <% if @user.full_payment_proof.attached? %>
-              <%= image_tag @user.full_payment_proof, class: "img-fluid" %>
-              <%= link_to "Descargar Comprobante", rails_blob_path(@user.full_payment_proof, disposition: "attachment"),  class: "btn btn-primary mt-2" %>
+              <div class="mb-4">
+                <% if @user.full_payment_proof.content_type == 'application/pdf' %>
+                  <%= image_tag 'https://placehold.co/400', class: "img-fluid" %>
+                <% else %>
+                  <%= image_tag @user.full_payment_proof, class: "img-fluid" %>
+                <% end %>
+                <%= link_to "Descargar Comprobante", rails_blob_path(@user.full_payment_proof, disposition: "attachment"), class: "btn btn-primary mt-2" %>
+              </div>
             <% else %>
-              <p>No se ha subido comprobante.</p>
+              <p>No se ha subido comprobante de pago completo.</p>
             <% end %>
+
+            <% if @user.reservation_payment_proof.attached? %>
+              <div class="mb-4">
+                <% if @user.reservation_payment_proof.content_type == 'application/pdf' %>
+                  <%= image_tag 'https://placehold.co/400', class: "img-fluid" %>
+                <% else %>
+                  <%= image_tag @user.reservation_payment_proof, class: "img-fluid" %>
+                <% end %>
+                <%= link_to "Descargar Comprobante de Reserva", rails_blob_path(@user.reservation_payment_proof, disposition: "attachment"), class: "btn btn-primary mt-2" %>
+              </div>
+            <% else %>
+              <p>No se ha subido comprobante de reserva.</p>
+            <% end %>
+
+            <% if @user.second_payment_proof.attached? %>
+              <div class="mb-4">
+                <% if @user.second_payment_proof.content_type == 'application/pdf' %>
+                  <%= image_tag 'https://placehold.co/400', class: "img-fluid" %>
+                <% else %>
+                  <%= image_tag @user.second_payment_proof, class: "img-fluid" %>
+                <% end %>
+                <%= link_to "Descargar Segundo Comprobante", rails_blob_path(@user.second_payment_proof, disposition: "attachment"), class: "btn btn-primary mt-2" %>
+              </div>
+            <% else %>
+              <p>No se ha subido el segundo comprobante de pago.</p>
+            <% end %>
+
           </div>
         </div>
       </div>

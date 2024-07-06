@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
-  before_action :authenticate_user!, only:[:show, :edit, :profile, :update, :destroy]
-  before_action :set_user, only: [:update, :show, :destroy]
+  before_action :authenticate_user!, only: [:show, :edit, :profile, :update, :destroy, :upload_second_payment]
+  before_action :set_user, only: [:update, :show, :destroy, :upload_second_payment, :profile, :waiting_approval]
+  skip_before_action :check_user_approved, only: [:upload_second_payment]
 
   def index
     @users = User.all
@@ -34,6 +35,20 @@ class UsersController < ApplicationController
     end
   end
 
+  def waiting_approval
+    @user = current_user
+  end
+
+  def upload_second_payment
+    @user.skip_password_validation = true
+    @user.uploading_second_payment = true
+    if @user.update(second_payment_proof_params)
+      redirect_to waiting_approval_path, notice: 'Segundo comprobante de pago subido con éxito.'
+    else
+      redirect_to waiting_approval_path, alert: @user.errors.full_messages.join(', ')
+    end
+  end
+
   private
 
   def set_user
@@ -42,5 +57,9 @@ class UsersController < ApplicationController
 
   def user_params
     params.require(:user).permit(:name, :email, :role)
+  end
+
+  def second_payment_proof_params
+    params.require(:user).permit(:second_payment_proof)
   end
 end
