@@ -11,12 +11,9 @@ class Admin::DashboardController < ApplicationController
 
     @coders = User.where(role: 'Coder').limit(per_page).offset(offset)
     @total_pages = (User.where(role: 'Coder').count.to_f / per_page).ceil
-    # Filtra para obtener solo los estudiantes que han sido aprobados
     @students = User.where(role: 'estudiante', approved: true)
-
     @waiting_users = User.where(approved: false)
     @total_waiting_pages = (User.where(approved: false).count.to_f / per_page).ceil
-
     @total_classroom_pages = (Classroom.count.to_f / per_page).ceil
     @classrooms = Classroom.where(status: 'Abierto').offset(page * per_page).limit(per_page)
 
@@ -26,21 +23,32 @@ class Admin::DashboardController < ApplicationController
     end
   end
 
-# app/controllers/admin/dashboard_controller.rb
-def income_report
-  authorize :dashboard, :admin_access?
+  def income_report
+    @total_income = Classroom.all.sum(&:total_cost)
 
-  @total_income = Classroom.all.sum(&:total_cost)
-  workshops = Workshop.includes(:classrooms).all
+    @income_by_workshop = Workshop.includes(:classrooms).map do |workshop|
+      {
+        workshop: workshop,
+        income: workshop.classrooms.sum(&:total_cost)
+      }
+    end
 
-  @workshops = workshops.map do |workshop|
-    {
-      name: workshop.name,
-      income: workshop.classrooms.sum(&:total_cost)
-    } if workshop.classrooms.any?
-  end.compact  # Ensure no nil entries and @workshops is always an array
-end
+    @income_by_classroom = Classroom.all.map do |classroom|
+      {
+        classroom: classroom,
+        income: classroom.total_cost
+      }
+    end
 
+    classrooms = Classroom.all
+    @income_over_time = classrooms.group_by { |c| c.created_at.beginning_of_month }
+                                  .transform_values { |classrooms| classrooms.sum(&:total_cost) }
+
+    # Debugging
+    Rails.logger.info "Income by Workshop: #{@income_by_workshop.inspect}"
+    Rails.logger.info "Income by Classroom: #{@income_by_classroom.inspect}"
+    Rails.logger.info "Income Over Time: #{@income_over_time.inspect}"
+  end
 
   private
 

@@ -1,4 +1,3 @@
-<!-- app/views/class_sessions/_form.html.erb -->
 <%= f.simple_fields_for :class_sessions do |session_form| %>
   <div class="nested-fields">
     <div class="form-group">
@@ -10,7 +9,7 @@
     <div class="form-group">
       <%= session_form.input :end_time, as: :time, label: 'End Time', input_html: { class: 'form-control', autocomplete: 'off' }, wrapper_html: { class: 'text-white' } %>
     </div>
-    <%= link_to_remove_association "Remove session", session_form, class: 'btn btn-danger' %>
+    <a href="#" class="btn btn-danger" data-action="click->sessions#remove" data-target="sessions.removeLink">Remove session</a>
   </div>
 <% end %>
-<%= link_to_add_association 'Add Session', f, :class_sessions, class: 'btn btn-secondary' %>
+<a href="#" class="btn btn-secondary" data-action="click->sessions#add">Add Session</a>
