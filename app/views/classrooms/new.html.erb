@@ -1,9 +1,9 @@
-<div class="container">
-  <h1 class="text-white">Create New Classroom</h1>
+<div class="container bg-light p-5 rounded text-black">
+  <h1 class="mb-4">Create New Classroom</h1>
 
   <% if @classroom.errors.any? %>
-    <div id="error_explanation" class="bg-light text-black p-3 rounded">
-      <h2><%= pluralize(@classroom.errors.count, "error") %> prohibited this classroom from being saved:</h2>
+    <div id="error_explanation" class="alert alert-danger">
+      <h4><%= pluralize(@classroom.errors.count, "error") %> prohibited this classroom from being saved:</h4>
       <ul>
         <% @classroom.errors.full_messages.each do |message| %>
           <li><%= message %></li>
@@ -12,65 +12,47 @@
     </div>
   <% end %>
 
-  <%= simple_form_for(@classroom, html: { class: 'bg-light p-3 rounded text-black', 'data-turbo': 'false' }) do |f| %>
-    <div class="form-group">
-      <%= f.collection_select :workshop_id, Workshop.all, :id, :name, {include_blank: 'Please select'}, {class: 'form-select', required: true} %>
+  <%= simple_form_for(@classroom, html: { class: 'form-horizontal', data: { controller: "sessions" } }) do |f| %>
+    <div class="mb-3">
+      <%= f.collection_select :workshop_id, Workshop.all, :id, :name, { include_blank: 'Please select' }, { class: 'form-select', required: true } %>
+    </div>
+
+    <div class="mb-3">
       <%= f.label :teacher_id, "Select a Teacher", class: 'form-label' %>
-      <%= f.collection_select :teacher_id, User.where(role: 'admin'), :id, :full_name, {include_blank: 'Please select'}, {class: 'form-select', required: true} %>
-      <%= f.input :day_count, label: 'Number of Days', input_html: { type: 'number', min: 1, class: 'form-control', id: 'day_count' } %>
-      <%= f.input :hours_per_class, label: 'Hours per Class', input_html: { type: 'number', min: 1, class: 'form-control' } %>
-      <%= f.input :regular_price, label: 'Regular Price ($)', input_html: { type: 'text', class: 'form-control' } %>
-      <%= f.input :discount_percentage, label: 'Discount Percentage (%)', input_html: { type: 'text', class: 'form-control' } %>
-      <%= f.input :price_per_student, label: 'Price per Student ($)', input_html: { type: 'text', class: 'form-control', readonly: true } %>
+      <%= f.collection_select :teacher_id, User.where(role: 'admin'), :id, :full_name, { include_blank: 'Please select' }, { class: 'form-select', required: true } %>
+    </div>
 
-      <h4 class="text-white">Class Sessions</h4>
-      <div id="sessions_container">
-        <!-- Los campos de sesión se insertarán aquí -->
+    <div class="row mb-3">
+      <div class="col">
+        <%= f.input :day_count, label: 'Number of Days', input_html: { type: 'number', min: 1, class: 'form-control', id: 'day_count', data: { sessions_target: "dayCountInput" } } %>
       </div>
+      <div class="col">
+        <%= f.input :hours_per_class, label: 'Hours per Class', input_html: { type: 'number', min: 1, class: 'form-control' } %>
+      </div>
+    </div>
 
+    <div class="row mb-3">
+      <div class="col">
+        <%= f.input :regular_price, label: 'Regular Price ($)', input_html: { type: 'text', class: 'form-control' } %>
+      </div>
+      <div class="col">
+        <%= f.input :discount_percentage, label: 'Discount Percentage (%)', input_html: { type: 'text', class: 'form-control' } %>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <%= f.input :price_per_student, label: 'Price per Student ($)', input_html: { type: 'text', class: 'form-control', readonly: true } %>
+    </div>
+
+    <h4 class="text-black mb-3">Class Sessions</h4>
+    <div id="sessions_container" data-sessions-target="sessionsContainer">
+      <!-- Los campos de sesión se insertarán aquí -->
+    </div>
+
+    <div class="mb-3">
       <%= f.input :status, collection: %w[Abierto En clase Finalizado], prompt: "Select a status", input_html: { class: 'form-select' } %>
     </div>
+
     <%= f.button :submit, 'Create Classroom', class: 'btn btn-primary' %>
   <% end %>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      const dayCountInput = document.getElementById('day_count');
-      const sessionsContainer = document.getElementById('sessions_container');
-
-      function updateSessions() {
-        const dayCount = parseInt(dayCountInput.value) || <%= @classroom.class_sessions.size %>;
-        sessionsContainer.innerHTML = '';
-
-        <% @classroom.class_sessions.each_with_index do |session, index| %>
-          sessionsContainer.innerHTML += `
-            <div class="form-group">
-              <label class="text-white">Session Date ${<%= index + 1 %>}</label>
-              <input type="date" class="form-control" name="classroom[class_sessions_attributes][${<%= index %>}][session_date]" value="<%= session.session_date %>">
-              <label class="text-white">Start Time</label>
-              <input type="time" class="form-control" name="classroom[class_sessions_attributes][${<%= index %>}][start_time]" value="<%= session.start_time.strftime('%H:%M') %>">
-              <label class="text-white">End Time</label>
-              <input type="time" class="form-control" name="classroom[class_sessions_attributes][${<%= index %>}][end_time]" value="<%= session.end_time.strftime('%H:%M') %>">
-            </div>
-          `;
-        <% end %>
-
-        for (let i = <%= @classroom.class_sessions.size %>; i < dayCount; i++) {
-          sessionsContainer.innerHTML += `
-            <div class="form-group">
-              <label class="text-white">Session Date ${i + 1}</label>
-              <input type="date" class="form-control" name="classroom[class_sessions_attributes][${i}][session_date]">
-              <label class="text-white">Start Time</label>
-              <input type="time" class="form-control" name="classroom[class_sessions_attributes][${i}][start_time]">
-              <label class="text-white">End Time</label>
-              <input type="time" class="form-control" name="classroom[class_sessions_attributes][${i}][end_time]">
-            </div>
-          `;
-        }
-      }
-
-      dayCountInput.addEventListener('change', updateSessions);
-      updateSessions();  // Añade esta línea para inicializar los campos correctamente
-    });
-  </script>
 </div>

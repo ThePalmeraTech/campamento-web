@@ -3,9 +3,10 @@ class Classroom < ApplicationRecord
   belongs_to :workshop
   has_many :classroom_students
   has_many :students, through: :classroom_students, source: :user
-  has_many :class_sessions, dependent: :destroy
 
+  has_many :class_sessions, inverse_of: :classroom, dependent: :destroy
   accepts_nested_attributes_for :class_sessions, allow_destroy: true
+
 
   validates :teacher, presence: true
   validates :workshop_id, presence: true, unless: -> { workshop.blank? }
