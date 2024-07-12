@@ -53,7 +53,7 @@ class Admin::DashboardController < ApplicationController
   private
 
   def ensure_admin
-    redirect_to root_path, alert: 'Access denied' unless current_user&.admin?
+    redirect_to root_path, alert: 'Acceso denegado' unless current_user&.admin?
   end
 
   def js_request?
@@ -62,7 +62,7 @@ class Admin::DashboardController < ApplicationController
 
   def check_user_approved
     unless current_user.approved? || current_user.admin?
-      redirect_to waiting_approval_path, alert: "You must be approved to access this page."
+      redirect_to waiting_approval_path, alert: "Debes ser aprobado por el admin antes de acceder a esta página."
     end
   end
 end

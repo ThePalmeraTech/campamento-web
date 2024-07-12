@@ -1,0 +1,38 @@
+
+//*utilities *//
+
+.vh-100 {
+  min-height: 100vh; /* Altura mínima de 100vh */
+  padding: 7vh 0vh;
+}
+
+
+
+.discount-amount {
+
+  div > h3 {
+    font-size: 2.5rem; /* Tamaño de fuente grande */
+    font-weight: bold; /* Fuente en negrita */
+    color: #abb4b3; /* Verde azulado */
+  }
+
+  div h2 {
+    font-size: 3.5rem; /* Tamaño de fuente grande */
+    font-weight: bold; /* Fuente en negrita */
+    color: #464646; /* Verde azulado */
+  }
+}
+
+.bg-middlegreen-line {
+  position: absolute;
+  z-index: 0;
+  margin-top: 3em;
+  max-width: 100%;
+}
+
+.bg-middlebottom-line {
+  position: absolute;
+  z-index: 0;
+  rotate: 90deg;
+  width: 100vh;
+}

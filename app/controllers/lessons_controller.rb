@@ -4,8 +4,6 @@ class LessonsController < ApplicationController
   before_action :set_lesson, only: [:show, :edit, :update, :destroy, :toggle_completion]
   before_action :authorize_lesson, except: [:index, :new, :create]
 
-
-
   def new
     @lesson = @workshop.lessons.new
     authorize @lesson
@@ -15,7 +13,7 @@ class LessonsController < ApplicationController
     @lesson = @workshop.lessons.build(lesson_params)
     authorize @lesson
     if @lesson.save
-      redirect_to [@workshop, @lesson], notice: 'Lesson was successfully created.'
+      redirect_to [@workshop, @lesson], notice: 'La lección se creó exitosamente.'
     else
       render :new
     end
@@ -27,23 +25,21 @@ class LessonsController < ApplicationController
     @completed_lessons = LessonCompletion.where(user: current_user, lesson: @lessons).pluck(:lesson_id)
   end
 
-
   def show
     @lesson = Lesson.find(params[:id])
-    @workshop = @lesson.workshop  # Correctamente asignado
-    authorize @workshop  # Verifica que el usuario tenga permiso para ver el taller asociado
+    @workshop = @lesson.workshop  # Asignación correcta
+    authorize @workshop  # Verifica permisos para ver el taller asociado
 
-    # La siguiente línea podría ser eliminada si solo necesitas mostrar detalles de la lección específica
-    @lessons = @workshop.lessons.presence || []  # Esto es innecesario si solo muestras una lección
+    # La siguiente línea podría eliminarse si solo necesitas mostrar detalles de la lección específica
+    @lessons = @workshop.lessons.presence || []  # Innecesario si solo se muestra una lección
   end
-
 
   def edit
   end
 
   def update
     if @lesson.update(lesson_params)
-      redirect_to workshop_lesson_path(@workshop, @lesson), notice: 'Lesson was successfully updated.'
+      redirect_to workshop_lesson_path(@workshop, @lesson), notice: 'La lección se actualizó exitosamente.'
     else
       render :edit
     end
@@ -51,7 +47,7 @@ class LessonsController < ApplicationController
 
   def destroy
     @lesson.destroy
-    redirect_to workshop_lessons_path(@workshop), notice: 'Lesson was successfully destroyed.'
+    redirect_to workshop_lessons_path(@workshop), notice: 'La lección se eliminó exitosamente.'
   end
 
   def toggle_completion
@@ -68,17 +64,14 @@ class LessonsController < ApplicationController
       if next_lesson
         redirect_to workshop_lesson_path(@lesson.workshop, next_lesson)
       else
-        flash[:notice] = '¡Felicidades! Haz completado el taller.'
+        flash[:notice] = '¡Felicidades! Has completado el taller.'
         redirect_to workshop_lessons_path(@lesson.workshop)
       end
     end
   end
 
-
-
   def next_lesson
     workshop.lessons.where("id > ?", self.id).order(:id).first
-
   end
 
   private

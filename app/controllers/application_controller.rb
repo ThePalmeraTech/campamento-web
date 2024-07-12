@@ -13,13 +13,15 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
 
   # Helper para calcular los slots disponibles en aulas abiertas.
-  helper_method :available_student_slots
+  helper_method :available_student_slots, :resource_name, :devise_mapping
 
   # Integración de Pundit para manejo de políticas de autorización.
   include Pundit
 
   # Rescata de errores de autorización de Pundit y redirecciona adecuadamente.
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
+
+  before_action :authenticate_user!, except: [:el_coding_challenge]
 
   protected
 
@@ -52,5 +54,15 @@ class ApplicationController < ActionController::Base
     else
       0  # No hay aulas abiertas
     end
+  end
+
+  # Método para obtener el nombre del recurso para Devise
+  def resource_name
+    :user
+  end
+
+  # Método para obtener el mapeo de Devise
+  def devise_mapping
+    Devise.mappings[:user]
   end
 end

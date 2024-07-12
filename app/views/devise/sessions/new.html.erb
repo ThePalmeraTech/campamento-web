@@ -1,70 +1,50 @@
-<div class="container mt-5 pt-5 mt-5 pt-5 text-black">
+<div class="container container-center text-black vh-100">
   <div class="row">
-    <!-- Columna de Login -->
+    <!-- Login Column -->
     <div class="col-md-4">
-    <div alt="" style="width: 175px;border-radius: 175px;height: 175px;background-position-x: 47%;background-position-y: 50%;background-size: 180%;background-image: url('/images/logo/Campamentoweb1.webp'); margin:0 auto;"> </div>
-      <h2>Log in</h2>
+      <div alt="" style="width: 175px; border-radius: 175px; height: 175px; background-position-x: 47%; background-position-y: 50%; background-size: 180%; background-image: url('/images/logo/Campamentoweb1.webp'); margin:0 auto;"></div>
+      <h2>Iniciar sesión</h2>
       <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: 'form-horizontal' }) do |f| %>
         <div class="mb-3">
-          <%= f.label :email, class: 'form-label' %>
+          <%= f.label :email, "Correo electrónico", class: 'form-label' %>
           <%= f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-control' %>
         </div>
 
         <div class="mb-3">
-          <%= f.label :password, class: 'form-label' %>
+          <%= f.label :password, "Contraseña", class: 'form-label' %>
           <%= f.password_field :password, autocomplete: "current-password", class: 'form-control' %>
         </div>
 
         <% if devise_mapping.rememberable? %>
           <div class="form-check mb-3">
             <%= f.check_box :remember_me, class: 'form-check-input' %>
-            <%= f.label :remember_me, class: 'form-check-label' %>
+            <%= f.label :remember_me, "Recuérdame", class: 'form-check-label' %>
           </div>
         <% end %>
 
         <div class="actions">
-          <%= f.submit "Log in", class: 'btn btn-primary' %>
+          <%= f.submit "Iniciar sesión", class: 'btn btn-primary' %>
         </div>
       <% end %>
-
-
 
       <%= render "devise/shared/links" %>
     </div>
 
-    <!-- Columna de Registro -->
+    <!-- Registration Column -->
     <div class="col-md-7 offset-md-1 text-justify">
-     <% if available_student_slots > 0 %>
-
-     <!-- Dentro de tu vista de Classroom o donde prefieras -->
-
-    <%- if devise_mapping.registerable? && controller_name != 'registrations' %>
-    <h1>Únete a 'Campamento Web' </h1>
-
-    <p class="fs-4">Este taller está diseñado tanto para los que aún confunden JavaScript con un café fuerte,
-      como para los programadores que quieren mejorar sus habilidades en el codiciado arte del frontend.</p>
-
-      <p  class="fs-4">Ideal para aquellos que buscan sumergirse en un proceso creativo con tecnología,
-      empezar una carrera en el campo, saciar la curiosidad o simplemente para añadir algo impresionante
-      a su portafolio.</p>
-
-     <%= link_to "Más información", new_registration_path(resource_name), class: "btn btn-lg btn-primary" %><br />
-    <% end %>
-
-    <% else %>
-
-<h1>Únete a 'Campamento Web' </h1>
-
-    <p class="fs-4"><b>El Coding Challenge</b> está diseñado tanto para los que aún confunden JavaScript con un café fuerte,
-      como para los programadores que quieren mejorar sus habilidades en el codiciado arte del frontend.</p>
-
-      <p  class="fs-4">Ideal para aquellos que buscan sumergirse en un proceso creativo con tecnología,
-      empezar una carrera en el campo, saciar la curiosidad o simplemente para añadir algo impresionante
-      a su portafolio.</p>
-
-      <%= link_to "Siguiente", new_registration_path(resource_name), class: "btn btn-lg btn-primary" %><br />
-    <% end %>
-
+      <% if available_student_slots > 0 %>
+        <%- if devise_mapping.registerable? && controller_name != 'registrations' %>
+          <h1>Únete a 'Campamento Web'</h1>
+          <p class="fs-4">Este taller está diseñado tanto para los que aún confunden JavaScript con un café fuerte, como para los programadores que quieren mejorar sus habilidades en el codiciado arte del frontend.</p>
+          <p class="fs-4">Ideal para aquellos que buscan sumergirse en un proceso creativo con tecnología, empezar una carrera en el campo, saciar la curiosidad o simplemente para añadir algo impresionante a su portafolio.</p>
+          <%= link_to "Más información", new_registration_path(resource_name), class: "btn btn-lg btn-primary" %><br />
+        <% end %>
+      <% else %>
+        <h1>Únete a 'Campamento Web'</h1>
+        <p class="fs-4"><b>El Coding Challenge</b> está diseñado tanto para los que aún confunden JavaScript con un café fuerte, como para los programadores que quieren mejorar sus habilidades en el codiciado arte del frontend.</p>
+        <p class="fs-4">Ideal para aquellos que buscan sumergirse en un proceso creativo con tecnología, empezar una carrera en el campo, saciar la curiosidad o simplemente para añadir algo impresionante a su portafolio.</p>
+        <%= link_to "Siguiente", new_registration_path(resource_name), class: "btn btn-lg btn-primary" %><br />
+      <% end %>
     </div>
   </div>
 </div>
