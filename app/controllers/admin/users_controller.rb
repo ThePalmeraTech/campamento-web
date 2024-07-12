@@ -11,12 +11,14 @@ module Admin
       if can_be_approved?(@user)
         ActiveRecord::Base.transaction do
           @user.update!(approved: true)
-          unless assign_to_classroom(@user)
+          if assign_to_classroom(@user)
+            UserMailer.approval_email(@user).deliver_now
+            redirect_to admin_dashboard_path, notice: 'Usuario aprobado y asignado al aula con éxito.'
+          else
+            @user.update!(approved: false)  # Revert approval if no classroom is available
             redirect_to admin_dashboard_path, alert: 'Aprobado, pero no hay aulas disponibles que coincidan con la selección del taller.'
-            return
           end
         end
-        redirect_to admin_dashboard_path, notice: 'Usuario aprobado y asignado al aula con éxito.'
       else
         redirect_to admin_dashboard_path, alert: 'No hay aulas disponibles. El usuario no puede ser aprobado en este momento.'
       end

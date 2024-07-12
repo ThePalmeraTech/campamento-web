@@ -11,12 +11,12 @@ class AdminController < ApplicationController
   def approve
     user = User.find(params[:id])
     user.update(approved: true)
-    redirect_to admin_path, notice: 'User approved successfully'
+    redirect_to admin_path, notice: 'Usuario aprobado'
   end
 
   private
 
   def ensure_admin
-    redirect_to root_path, alert: 'Access denied' unless current_user.admin?
+    redirect_to root_path, alert: 'Acceso denegado' unless current_user.admin?
   end
 end

@@ -25,4 +25,11 @@ class UserMailer < ApplicationMailer
       subject: "Nuevo usuario registrado: #{@user.full_name}"
     )
   end
+
+  def approval_email(user)
+    @user = user
+    mail(to: @user.email, subject: 'Tu cuenta ha sido aprobada')
+  end
+
+  
 end

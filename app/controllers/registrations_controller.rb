@@ -13,14 +13,14 @@ class RegistrationsController < Devise::RegistrationsController
         @price_per_student = classroom.price_per_student
         @regular_price = classroom.regular_price
         @discount_percentage = classroom.discount_percentage
-        logger.info "Price per student set to #{@price_per_student}"
-        logger.info "Regular price set to #{@regular_price}"
-        logger.info "Discount percentage loaded: #{@discount_percentage}%"
+        logger.info "Precio por estudiante configurado en #{@price_per_student}"
+        logger.info "Precio regular configurado en #{@regular_price}"
+        logger.info "Porcentaje de descuento cargado: #{@discount_percentage}%"
       else
-        logger.info "No classroom found for workshop_id #{workshop_id}"
+        logger.info "No se encontró un salón para el ID de taller #{workshop_id}"
       end
     else
-      logger.info "No workshop_id found in params"
+      logger.info "No se encontró el ID del taller en los parámetros"
     end
     super
   end

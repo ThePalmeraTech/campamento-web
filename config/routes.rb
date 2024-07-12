@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  root to: 'home#index'
+  root to: 'pages#el_coding_challenge'
 
   devise_for :users, controllers: {
     sessions: 'sessions',
@@ -11,7 +11,7 @@ Rails.application.routes.draw do
   end
 
   unauthenticated :user do
-    root to: redirect('/users/sign_in'), as: :unauthenticated_root
+    root to: 'pages#el_coding_challenge', as: :unauthenticated_root
   end
 
   devise_scope :user do
@@ -34,7 +34,6 @@ Rails.application.routes.draw do
     patch 'users/:id/approve', to: 'users#approve', as: 'approve_user'
     resources :coders, only: [:index]
     get 'income_report', to: 'dashboard#income_report', as: 'income_report'
-
   end
 
   get 'waiting_approval', to: 'static_pages#waiting_approval'

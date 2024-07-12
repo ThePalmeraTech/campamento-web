@@ -1,0 +1,270 @@
+.hero-banner {
+  background: url(https://www.ascentfunding.com/wp-content/uploads/2022/10/How-Much-Does-a-Coding-Bootcamp-Cost76-1024x683.jpg) no-repeat;
+  background-size: cover;
+  min-height: 70vh;
+}
+
+// Estilos específicos para la sección Mainstage_V1
+#Mainstage_V1 {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  color: #fff;
+  min-height: 115vh;
+
+  .bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    &:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(180deg, #13d1c7 13%, #13d1c714 65%, #FFFFFFED 92%, #f8f4f4 100%);
+    }
+  }
+
+  .main {
+    padding-top: 71px;
+    padding-bottom: 150px;
+
+    small.blk {
+      font-size: 1.2rem; // Tamaño ajustado
+      letter-spacing: 1.2rem; // Espacio entre letras ajustado
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 1rem;
+      position: relative;
+
+      &:before,
+      &:after {
+        content: '';
+        display: block;
+        width: 40%;
+        height: 2px;
+        background-color: #ffffff; // Color de las líneas
+        position: absolute;
+        top: 213%;
+        transform: translateY(-50%);
+      }
+
+      &:before {
+        left: 122px;
+      }
+
+      &:after {
+        right: 122px;
+      }
+    }
+
+    .anchor-flair {
+      margin: 0 auto 2rem;
+      width: 24px;
+      height: 24px;
+      position: relative;
+
+      svg {
+        fill: #ffffff;
+        position: relative;
+        z-index: 1;
+        width: 24px; // Tamaño ajustado
+        height: 24px; // Tamaño ajustado
+      }
+    }
+
+    header {
+      h2 {
+        font-size: 7.778rem; // Tamaño ajustado
+        line-height: 1.2;
+        margin-bottom: 1.5rem; // Margen inferior ajustado
+        letter-spacing: -0.029em; // Espaciado de letras ajustado
+
+        .blk {
+          display: block;
+        }
+
+        em.blk {
+          font-style: normal;
+        }
+
+        strong.flx-grd-sml {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 7.778rem; // Tamaño ajustado
+          font-weight: 600;
+
+          svg {
+            width: 24px;
+            height: 24px;
+            margin: 0 1rem;
+            fill: #ffffff;
+          }
+        }
+      }
+
+      // Botones estilizados
+      .btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem 2rem;
+        font-size: 1rem;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        text-decoration: none !important;
+        transition: background-color 0.3s;
+        font-weight: bold;
+
+        &:hover {
+          background-color: #0fb39c;
+        }
+
+        svg {
+          margin-right: 0.5rem;
+          fill: currentColor;
+        }
+
+        &.v2 {
+          background-color: #000;
+          border: 1px solid #fff;
+          transition: background-color 0.3s;
+
+          &:hover {
+            background-color: #333;
+          }
+        }
+      }
+
+      .buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2rem;
+      }
+    }
+  }
+
+  .popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.9);
+    padding: 2rem;
+    border-radius: 8px;
+    display: none;
+
+    svg {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      fill: #fff;
+
+      &:hover {
+        fill: #007bff;
+      }
+    }
+
+    video {
+      width: 100%;
+      height: auto;
+    }
+  }
+
+  &.open .popup {
+    display: block;
+  }
+
+  // Media Queries para hacer el diseño responsive
+  @media (max-width: 1200px) {
+    .main header h2 {
+      font-size: 6rem;
+    }
+
+    .main strong.flx-grd-sml {
+      font-size: 6rem;
+    }
+  }
+
+  @media (max-width: 992px) {
+    .main {
+      padding-top: 50px;
+      padding-bottom: 100px;
+    }
+
+    .main header h2 {
+      font-size: 5rem;
+    }
+
+    .main strong.flx-grd-sml {
+      font-size: 5rem;
+    }
+
+    small.blk {
+      font-size: 1rem;
+      letter-spacing: 0.5rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .main {
+      padding-top: 30px;
+      padding-bottom: 70px;
+    }
+
+    .main header h2 {
+      font-size: 4rem;
+    }
+
+    .main strong.flx-grd-sml {
+      font-size: 4rem;
+    }
+
+    .buttons {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .main {
+      padding-top: 20px;
+      padding-bottom: 50px;
+    }
+
+    .main header h2 {
+      font-size: 3rem;
+    }
+
+    .main strong.flx-grd-sml {
+      font-size: 3rem;
+    }
+
+    .buttons {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .popup {
+      padding: 1rem;
+    }
+  }
+}
